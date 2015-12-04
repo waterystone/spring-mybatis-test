@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %c{1}:%L - %m%n" />
+		</layout>
+	</appender>
+	<appender name="springAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="./logs/spring.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %c{1}:%L - %m%n" />
+		</layout>
+	</appender>
+	<appender name="rootAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="./logs/root.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %c{1}:%L - %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="com.adu" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="springAppender" />
+	</logger>
+
+	<root>
+		<level value="ERROR" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="rootAppender" />
+	</root>
+
+</log4j:configuration>

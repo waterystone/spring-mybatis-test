@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.adu.spring_test.mybatis.dao.UserMapper">
+	<sql id="baseCols">
+		id, user_name, age, create_time, update_time
+	</sql>
+
+	<insert id="addUser">
+		INSERT INTO
+		user_info(user_name,
+		age,
+		create_time,
+		update_time)
+		values
+		(#{user.userName},
+		#{user.age}, now(),
+		now())
+	</insert>
+
+	<insert id="addUsers">
+		INSERT INTO
+		user_info(user_name,
+		age,
+		create_time, update_time)
+		values
+		<foreach collection="list" item="obj" separator=",">
+			(#{obj.userName},
+			#{obj.age}, now(), now())
+		</foreach>
+	</insert>
+
+	<select id="getUserById" resultType="com.adu.spring_test.mybatis.model.User">
+		SELECT
+		<include refid="baseCols" />
+		FROM user_info
+		WHERE id = #{id}
+	</select>
+
+	<select id="getUsersByIds" resultType="com.adu.spring_test.mybatis.model.User">
+		SELECT
+		<include refid="baseCols" />
+		FROM user_info
+		WHERE id IN
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="item">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="getUsersBetweenTime" resultType="com.adu.spring_test.mybatis.model.User">
+		SELECT
+		<include refid="baseCols" />
+		FROM user_info
+		WHERE create_time BETWEEN #{startTime} AND #{endTime}
+	</select>
+
+	<update id="updateUser">
+		UPDATE user_info SET user_name = #{user.userName},
+		age = #{user.age},
+		update_time= now()
+		where id = #{user.id}
+	</update>
+
+	<delete id="deleteById">
+		DELETE FROM user_info WHERE id = #{id}
+	</delete>
+
+</mapper>
