@@ -4,8 +4,8 @@
 
 <mapper namespace="com.adu.spring_test.mybatis.dao.UserInfoMapper">
 	<resultMap id="userInfoResultMap" type="com.adu.spring_test.mybatis.model.UserInfo" >
-		<result column="sex" property="sex" jdbcType="INTEGER" />
-		<result column="prof_info" property="profInfo" jdbcType="VARCHAR" javaType="com.adu.spring_test.mybatis.model.ProfInfo"/>
+		<result column="sex" property="sex" jdbcType="INTEGER" typeHandler="com.adu.spring_test.mybatis.typehandler.EnumTraitTypeHandler"/>
+		<result column="prof_info" property="profInfo" jdbcType="VARCHAR" typeHandler="com.adu.spring_test.mybatis.typehandler.JsonTypeHandler"/>
 	</resultMap>
 
 	<sql id="baseCols">
@@ -19,7 +19,7 @@
 		WHERE id = #{id}
 	</select>
 
-	<select id="getUsersByIds" resultType="com.adu.spring_test.mybatis.model.UserInfo">
+	<select id="getUsersByIds" resultMap="userInfoResultMap">
 		SELECT
 		<include refid="baseCols" />
 		FROM user_info
@@ -29,7 +29,7 @@
 		</foreach>
 	</select>
 
-	<select id="getUsersBetweenTime" resultType="com.adu.spring_test.mybatis.model.UserInfo">
+	<select id="getUsersBetweenTime" resultMap="userInfoResultMap">
 		SELECT
 		<include refid="baseCols" />
 		FROM user_info
@@ -42,7 +42,7 @@
 		VALUES
 		(
 			#{userName},
-			1,
+			#{sex,typeHandler=com.adu.spring_test.mybatis.typehandler.EnumTraitTypeHandler},
 			#{age},
 			#{profInfo,typeHandler=com.adu.spring_test.mybatis.typehandler.JsonTypeHandler}
 		)
@@ -55,9 +55,9 @@
 		<foreach collection="userInfoList" item="item" separator=",">
 			(
 				#{item.userName},
-				#{item.sex,typeHandler=SexEnumTypeHandler},
+				#{item.sex,typeHandler=com.adu.spring_test.mybatis.typehandler.EnumTraitTypeHandler},
 				#{item.age},
-				#{item.profInfo,typeHandler=ProfInfoTypeHandler}
+				#{item.profInfo,typeHandler=com.adu.spring_test.mybatis.typehandler.JsonTypeHandler}
 			)
 		</foreach>
 	</insert>

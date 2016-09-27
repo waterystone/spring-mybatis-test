@@ -12,18 +12,4 @@
 	</settings>
 
 
-    <typeAliases>
-        <typeAlias type="com.adu.spring_test.mybatis.typehandler.EnumTraitTypeHandler" alias="SexEnumTypeHandler" />
-        <typeAlias type="com.adu.spring_test.mybatis.typehandler.JsonTypeHandler" alias="ProfInfoTypeHandler" />
-    </typeAliases>
-
-    <typeHandlers>
-        <typeHandler handler="SexEnumTypeHandler"
-                     javaType="com.adu.spring_test.mybatis.enums.SexEnum" />
-
-        <typeHandler handler="ProfInfoTypeHandler"
-                     javaType="com.adu.spring_test.mybatis.model.ProfInfo" jdbcType="VARCHAR" />
-
-    </typeHandlers>
-
 </configuration>

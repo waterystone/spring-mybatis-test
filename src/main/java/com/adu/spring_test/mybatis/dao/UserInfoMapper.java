@@ -47,10 +47,10 @@ public interface UserInfoMapper {
     /**
      * 添加一批用户
      *
-     * @param users
+     * @param userInfoList
      * @return
      */
-    int addUsers(@Param("list") List<UserInfo> users);
+    int addUsers(@Param("userInfoList") List<UserInfo> userInfoList);
 
     /**
      * 根据id删除用户

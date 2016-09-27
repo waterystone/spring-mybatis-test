@@ -28,7 +28,7 @@ public class EnumTraitTypeHandler<E extends EnumTrait> extends BaseTypeHandler<E
     }
 
     @Override
-    public EnumTrait getNullableResult(ResultSet rs, String columnName) throws SQLException {
+    public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
         int i = rs.getInt(columnName);
         if (rs.wasNull()) {
             return null;
