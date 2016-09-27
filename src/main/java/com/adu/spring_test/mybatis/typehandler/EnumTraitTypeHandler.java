@@ -11,6 +11,15 @@ import org.apache.ibatis.type.JdbcType;
 import com.adu.spring_test.mybatis.enums.EnumTrait;
 import com.adu.spring_test.mybatis.util.EnumTraitUtil;
 
+/**
+ * mapper里字段到枚举类的映射。
+ * 用法:
+ * 入库：#{item.myEnum, typeHandler=com.adu.spring_test.mybatis.typehandler.EnumTraitTypeHandler}
+ * 出库：
+ * <resultMap>
+ * <result property="enumDataField" column="enum_data_field" javaType="com.xxx.MyEnum" typeHandler="com.adu.spring_test.mybatis.typehandler.EnumTraitTypeHandler"/>
+ * </resultMap>
+ */
 public class EnumTraitTypeHandler<E extends EnumTrait> extends BaseTypeHandler<EnumTrait> {
 
     private Class<E> type;
