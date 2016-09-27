@@ -18,12 +18,21 @@
 		<log4j.version>1.2.17</log4j.version>
 		<org.slf4j.version>1.7.2</org.slf4j.version>
 
-		<org.springframework.version>3.2.8.RELEASE</org.springframework.version>
+		<org.springframework.version>4.2.2.RELEASE</org.springframework.version>
 		<commons-dbcp.version>1.4</commons-dbcp.version>
 		<mysql.version>5.1.29</mysql.version>
 
 		<org.mybatis.version>3.1.1</org.mybatis.version>
 		<mybatis.version>1.2.3</mybatis.version>
+
+		<!--apache-->
+		<org.apache.commons.version>3.3.2</org.apache.commons.version>
+
+		<!--jackson-->
+		<jackson.version>2.3.0</jackson.version>
+
+		<!--guava-->
+		<guava.version>18.0</guava.version>
 	</properties>
 
 
@@ -112,6 +121,33 @@
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis-spring</artifactId>
 			<version>${mybatis.version}</version>
+		</dependency>
+
+		<!--apache-->
+		<dependency>
+			<artifactId>commons-lang3</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<version>${org.apache.commons.version}</version>
+		</dependency>
+
+		<!--jackson-->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<!--guava-->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>annotations</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 	</dependencies>
 

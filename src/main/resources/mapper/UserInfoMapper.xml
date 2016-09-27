@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.adu.spring_test.mybatis.dao.UserInfoMapper">
+	<resultMap id="userInfoResultMap" type="com.adu.spring_test.mybatis.model.UserInfo" >
+		<result column="sex" property="sex" jdbcType="INTEGER" />
+		<result column="prof_info" property="profInfo" jdbcType="VARCHAR" javaType="com.adu.spring_test.mybatis.model.ProfInfo"/>
+	</resultMap>
+
+	<sql id="baseCols">
+		id,user_name,sex,age,prof_info,create_time,update_time
+	</sql>
+
+	<select id="getUserById" resultMap="userInfoResultMap">
+		SELECT
+		<include refid="baseCols" />
+		FROM user_info
+		WHERE id = #{id}
+	</select>
+
+	<select id="getUsersByIds" resultType="com.adu.spring_test.mybatis.model.UserInfo">
+		SELECT
+		<include refid="baseCols" />
+		FROM user_info
+		WHERE id IN
+		<foreach collection="ids" open="(" close=")" separator="," item="item">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="getUsersBetweenTime" resultType="com.adu.spring_test.mybatis.model.UserInfo">
+		SELECT
+		<include refid="baseCols" />
+		FROM user_info
+		WHERE create_time BETWEEN #{startTime} AND #{endTime}
+	</select>
+
+	<insert id="addUser" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		user_info(user_name,sex,age,prof_info)
+		VALUES
+		(
+			#{userName},
+			1,
+			#{age},
+			#{profInfo,typeHandler=com.adu.spring_test.mybatis.typehandler.JsonTypeHandler}
+		)
+	</insert>
+
+	<insert id="addUsers">
+		INSERT INTO
+		user_info(user_name,sex,age,prof_info)
+		values
+		<foreach collection="userInfoList" item="item" separator=",">
+			(
+				#{item.userName},
+				#{item.sex,typeHandler=SexEnumTypeHandler},
+				#{item.age},
+				#{item.profInfo,typeHandler=ProfInfoTypeHandler}
+			)
+		</foreach>
+	</insert>
+
+
+
+	<delete id="deleteById">
+		DELETE FROM user_info WHERE id = #{id}
+	</delete>
+
+</mapper>

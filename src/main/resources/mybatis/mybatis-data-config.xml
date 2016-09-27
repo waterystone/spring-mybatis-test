@@ -2,13 +2,28 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<settings>
-		<!-- 全局映射器启用缓存 -->
-		<setting name="cacheEnabled" value="true" />
-		<!-- 查询时，关闭关联对象即时加载以提高性能 -->
-		<setting name="lazyLoadingEnabled" value="false" />
-		<setting name="autoMappingBehavior" value="FULL" />
-		<!-- 支持java驼峰命名与DB下划线映射 -->
-		<setting name="mapUnderscoreToCamelCase" value="true" />
+        <!-- 全局映射器启用缓存 -->
+        <setting name="cacheEnabled" value="true" />
+        <!-- 查询时，关闭关联对象即时加载以提高性能 -->
+        <setting name="lazyLoadingEnabled" value="false" />
+        <setting name="autoMappingBehavior" value="FULL" />
+        <!-- 支持java驼峰命名与DB下划线映射 -->
+        <setting name="mapUnderscoreToCamelCase" value="true" />
 	</settings>
+
+
+    <typeAliases>
+        <typeAlias type="com.adu.spring_test.mybatis.typehandler.EnumTraitTypeHandler" alias="SexEnumTypeHandler" />
+        <typeAlias type="com.adu.spring_test.mybatis.typehandler.JsonTypeHandler" alias="ProfInfoTypeHandler" />
+    </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="SexEnumTypeHandler"
+                     javaType="com.adu.spring_test.mybatis.enums.SexEnum" />
+
+        <typeHandler handler="ProfInfoTypeHandler"
+                     javaType="com.adu.spring_test.mybatis.model.ProfInfo" jdbcType="VARCHAR" />
+
+    </typeHandlers>
 
 </configuration>
