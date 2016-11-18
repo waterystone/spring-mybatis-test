@@ -12,7 +12,7 @@
     </settings>
 
     <typeHandlers>
-        <typeHandler handler="com.adu.spring_test.mybatis.typehandler.EnumTraitTypeHandler"
+        <typeHandler handler="com.adu.spring_test.mybatis.typehandler.EnumTypeHandler"
                      javaType="com.adu.spring_test.mybatis.enums.SexEnum"/>
 
         <typeHandler handler="com.adu.spring_test.mybatis.typehandler.JsonTypeHandler"
