@@ -15,7 +15,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 /**
  * mapper里json型字段到类的映射。
  * 用法一:
- * 入库：#{item.myObject, typeHandler=com.adu.spring_test.mybatis.typehandler.JsonTypeHandler}
+ * 入库：#{jsonDataField, typeHandler=com.adu.spring_test.mybatis.typehandler.JsonTypeHandler}
  * 出库：
  * <resultMap>
  * <result property="jsonDataField" column="json_data_field" javaType="com.xxx.MyClass" typeHandler="com.adu.spring_test.mybatis.typehandler.JsonTypeHandler"/>

@@ -11,12 +11,11 @@ import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
 import com.adu.spring_test.mybatis.enums.BaseEnum;
-import com.adu.spring_test.mybatis.util.EnumTraitUtil;
 
 /**
  * mapper里字段到枚举类的映射。
  * 用法一:
- * 入库：#{item.myEnum, typeHandler=com.adu.spring_test.mybatis.typehandler.EnumTypeHandler}
+ * 入库：#{enumDataField, typeHandler=com.adu.spring_test.mybatis.typehandler.EnumTypeHandler}
  * 出库：
  * <resultMap>
  * <result property="enumDataField" column="enum_data_field" javaType="com.xxx.MyEnum" typeHandler="com.adu.spring_test.mybatis.typehandler.EnumTypeHandler"/>
@@ -25,30 +24,27 @@ import com.adu.spring_test.mybatis.util.EnumTraitUtil;
  * 用法二：
  * 1）在mybatis-config.xml中指定handler:
  *      <typeHandlers>
- *              <typeHandler handler="com.adu.spring_test.mybatis.typehandler.EnumTypeHandler" javaType="com.xxx.MyClass"/>
+ *              <typeHandler handler="com.adu.spring_test.mybatis.typehandler.EnumTypeHandler" javaType="com.xxx.MyEnum"/>
  *      </typeHandlers>
  * 2)在MyClassMapper.xml里直接select/update/insert。
  */
 public class EnumTypeHandler<E extends BaseEnum> extends BaseTypeHandler<BaseEnum> {
-    private Class<E> enumType;
-    private Method codeOf;//MyEnum类要有static E codeOf(int)方法
+    private Method codeOf;//MyEnum类要有static E codeOf(int)方法!!!!
 
     public EnumTypeHandler(Class<E> enumType) {
         if (enumType == null)
             throw new IllegalArgumentException("Type argument cannot be null");
-        this.enumType = enumType;
 
         String className = enumType.getName();
-        String simpleName = enumType.getSimpleName();
 
         try {
             this.codeOf = enumType.getDeclaredMethod("codeOf", new Class[]{Integer.TYPE});
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Static method " + className + "#codeOf(int code):" + simpleName + " required.");
+            throw new RuntimeException("Static method " + className + "#codeOf(int code) required.");
         }
 
         if(!Modifier.isStatic(this.codeOf.getModifiers())) {
-            throw new RuntimeException("Static method " + className + "#codeOf(int code):" + simpleName + " required.");
+            throw new RuntimeException("Static method " + className + "#codeOf(int code) required.");
         }
     }
 
