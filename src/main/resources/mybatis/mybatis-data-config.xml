@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-	<settings>
+    <settings>
         <!-- 全局映射器启用缓存 -->
-        <setting name="cacheEnabled" value="true" />
+        <setting name="cacheEnabled" value="true"/>
         <!-- 查询时，关闭关联对象即时加载以提高性能 -->
-        <setting name="lazyLoadingEnabled" value="false" />
-        <setting name="autoMappingBehavior" value="FULL" />
+        <setting name="lazyLoadingEnabled" value="false"/>
+        <setting name="autoMappingBehavior" value="FULL"/>
         <!-- 支持java驼峰命名与DB下划线映射 -->
-        <setting name="mapUnderscoreToCamelCase" value="true" />
-	</settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <typeHandlers>
+        <typeHandler handler="com.adu.spring_test.mybatis.typehandler.EnumTraitTypeHandler"
+                     javaType="com.adu.spring_test.mybatis.enums.SexEnum"/>
+
+        <typeHandler handler="com.adu.spring_test.mybatis.typehandler.JsonTypeHandler"
+                     javaType="com.adu.spring_test.mybatis.model.ProfInfo"/>
+    </typeHandlers>
 
 
 </configuration>

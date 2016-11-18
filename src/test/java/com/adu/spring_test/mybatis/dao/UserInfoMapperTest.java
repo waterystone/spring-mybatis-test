@@ -26,11 +26,17 @@ public class UserInfoMapperTest {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
     @Test
     public void getUserById() {
         int id = 1;
         UserInfo user = userInfoMapper.getUserById(id);
+        logger.debug("user=" + user);
+    }
+
+    @Test
+    public void getUserById2() {
+        int id = 1;
+        UserInfo user = userInfoMapper.getUserById2(id);
         logger.debug("user=" + user);
     }
 
@@ -61,9 +67,15 @@ public class UserInfoMapperTest {
     public void addUser() {
         UserInfo userInfo = mockUserInfo();
         int res = userInfoMapper.addUser(userInfo);
-        logger.debug("res=" + res);
+        logger.debug("userInfo={},res={}", userInfo, res);
     }
 
+    @Test
+    public void addUser2() {
+        UserInfo userInfo = mockUserInfo();
+        int res = userInfoMapper.addUser2(userInfo);
+        logger.debug("userInfo={},res={}", userInfo, res);
+    }
 
     @Test
     public void addUsers() {
@@ -73,6 +85,13 @@ public class UserInfoMapperTest {
         logger.debug("res=" + res);
     }
 
+    @Test
+    public void addUsers2() {
+        List<UserInfo> users = mockUserInfos();
+
+        int res = userInfoMapper.addUsers2(users);
+        logger.debug("res=" + res);
+    }
 
     @Test
     public void deleteById() {
@@ -82,15 +101,13 @@ public class UserInfoMapperTest {
 
     }
 
-
     private UserInfo mockUserInfo() {
         UserInfo res = new UserInfo();
         res.setUserName("adu-" + System.currentTimeMillis());
         res.setSex(SexEnum.codeOf((int) System.currentTimeMillis() % 3));
         res.setAge(20 + new Random().nextInt(20));
-        res.setProfInfo(new ProfInfo(170 + 10 * new Random().nextDouble(), 80 + 10 * new Random().nextDouble
-                (), Lists.newArrayList("台球",
-                "乒乓球")));
+        res.setProfInfo(new ProfInfo(170 + 10 * new Random().nextDouble(), 80 + 10 * new Random().nextDouble(),
+                Lists.newArrayList("台球", "乒乓球")));
         return res;
     }
 

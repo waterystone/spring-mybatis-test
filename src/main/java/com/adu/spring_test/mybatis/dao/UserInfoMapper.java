@@ -12,12 +12,20 @@ import com.adu.spring_test.mybatis.model.UserInfo;
 public interface UserInfoMapper {
 
     /**
-     * 根据id获取用户信息
+     * 根据id获取用户信息(在mapper.xml中指定typeHandler)
      * 
      * @param id
      * @return
      */
     UserInfo getUserById(@Param("id") int id);
+
+    /**
+     * 根据id获取用户信息(在mybatis.xml中指定typeHandler)
+     * 
+     * @param id
+     * @return
+     */
+    UserInfo getUserById2(@Param("id") int id);
 
     /**
      * 根据id获取一批用户信息
@@ -37,7 +45,7 @@ public interface UserInfoMapper {
     List<UserInfo> getUsersBetweenTime(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     /**
-     * 添加用户
+     * 添加用户(在mapper.xml中指定typeHandler)
      *
      * @param user
      * @return
@@ -45,12 +53,28 @@ public interface UserInfoMapper {
     int addUser(UserInfo user);
 
     /**
-     * 添加一批用户
+     * 添加用户(在mybatis.xml中指定typeHandler)
+     *
+     * @param user
+     * @return
+     */
+    int addUser2(UserInfo user);
+
+    /**
+     * 添加一批用户(在mapper.xml中指定typeHandler)
      *
      * @param userInfoList
      * @return
      */
     int addUsers(@Param("userInfoList") List<UserInfo> userInfoList);
+
+    /**
+     * 添加一批用户(在mybatis.xml中指定typeHandler)
+     *
+     * @param userInfoList
+     * @return
+     */
+    int addUsers2(@Param("userInfoList") List<UserInfo> userInfoList);
 
     /**
      * 根据id删除用户

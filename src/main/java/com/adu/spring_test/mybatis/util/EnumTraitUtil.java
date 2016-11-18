@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.adu.spring_test.mybatis.enums.EnumTrait;
+import com.adu.spring_test.mybatis.enums.BaseEnum;
 import com.google.common.base.Converter;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
@@ -27,15 +27,15 @@ public abstract class EnumTraitUtil {
     private EnumTraitUtil() {
     }
 
-    private static final LoadingCache<Class, Converter<Integer, ? extends EnumTrait>> enumCodeConverterMap = CacheBuilder
-            .newBuilder().build(new CacheLoader<Class, Converter<Integer, ? extends EnumTrait>>() {
+    private static final LoadingCache<Class, Converter<Integer, ? extends BaseEnum>> enumCodeConverterMap = CacheBuilder
+            .newBuilder().build(new CacheLoader<Class, Converter<Integer, ? extends BaseEnum>>() {
                 @Override
-                public Converter<Integer, ? extends EnumTrait> load(final Class clazz) throws Exception {
+                public Converter<Integer, ? extends BaseEnum> load(final Class clazz) throws Exception {
                     return new EnumTraitCodeConverter(clazz);
                 }
             });
 
-    public static <T extends EnumTrait> T codeOf(final Class<T> clazz, int code) {
+    public static <T extends BaseEnum> T codeOf(final Class<T> clazz, int code) {
         try {
             return codeConverter(clazz).convert(code);
         } catch (ExecutionException e) {
@@ -44,13 +44,13 @@ public abstract class EnumTraitUtil {
         return null;
     }
 
-    private static <T extends EnumTrait> Converter<Integer, T> codeConverter(final Class<T> clazz)
+    private static <T extends BaseEnum> Converter<Integer, T> codeConverter(final Class<T> clazz)
             throws ExecutionException {
         Converter<Integer, T> integerConverter = (Converter<Integer, T>) enumCodeConverterMap.get(clazz);
         return integerConverter;
     }
 
-    private static final class EnumTraitCodeConverter<T extends EnumTrait> extends Converter<Integer, T>
+    private static final class EnumTraitCodeConverter<T extends BaseEnum> extends Converter<Integer, T>
             implements Serializable {
 
         private final Class<T> enumClass;
@@ -64,7 +64,7 @@ public abstract class EnumTraitUtil {
                         @Nullable
                         @Override
                         public Integer apply(T input) {
-                            return input.getCode();
+                            return input.code();
                         }
                     });
         }
@@ -76,7 +76,7 @@ public abstract class EnumTraitUtil {
 
         @Override
         protected Integer doBackward(T enumValue) {
-            return enumValue.getCode();
+            return enumValue.code();
         }
 
         @Override

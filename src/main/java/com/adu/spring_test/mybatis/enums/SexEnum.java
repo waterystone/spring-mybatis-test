@@ -4,7 +4,7 @@ package com.adu.spring_test.mybatis.enums;
  * @author yunjie.du
  * @date 2016/9/27 15:24
  */
-public enum SexEnum implements EnumTrait {
+public enum SexEnum implements BaseEnum {
     UNKNOWN(0,"未知"),
     MAN(1, "男士"),
     WOMAN(2, "女士");
@@ -26,7 +26,7 @@ public enum SexEnum implements EnumTrait {
         return UNKNOWN;
     }
 
-    public int getCode() {
+    public int code() {
         return code;
     }
 
