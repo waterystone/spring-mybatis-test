@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -53,10 +55,9 @@ public class UserInfoMapperTest {
 
     @Test
     public void getUsersBetweenTime() {
-        long period = 60 * 60 * 1000;
-        long now = System.currentTimeMillis();
-        long start = now - period;
-        List<UserInfo> users = userInfoMapper.getUsersBetweenTime(new Date(start), new Date(now));
+        Date now = new Date(), start = DateUtils.addDays(now, -365);
+        int offset = 0, limit = 3;
+        List<UserInfo> users = userInfoMapper.getUsersBetweenTime(start, now, new RowBounds(offset,limit));
 
         for (UserInfo user : users) {
             logger.debug(user.toString());

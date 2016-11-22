@@ -36,7 +36,7 @@
 		</foreach>
 	</select>
 
-	<select id="getUsersBetweenTime" resultMap="userInfoResultMap">
+	<select id="getUsersBetweenTime" resultType="com.adu.spring_test.mybatis.model.UserInfo">
 		SELECT
 		<include refid="baseCols" />
 		FROM user_info
