@@ -26,6 +26,7 @@ public enum SexEnum implements BaseEnum {
         return UNKNOWN;
     }
 
+    @Override
     public int code() {
         return code;
     }
