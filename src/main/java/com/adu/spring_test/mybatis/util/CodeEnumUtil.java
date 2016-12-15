@@ -1,6 +1,6 @@
 package com.adu.spring_test.mybatis.util;
 
-import com.adu.spring_test.mybatis.enums.BaseEnum;
+import com.adu.spring_test.mybatis.enums.CodeBaseEnum;
 
 /**
  * @author yunjie.du
@@ -13,7 +13,7 @@ public class CodeEnumUtil {
      * @param <E>
      * @return
      */
-    public static <E extends Enum<?> & BaseEnum> E codeOf(Class<E> enumClass, int code) {
+    public static <E extends Enum<?> & CodeBaseEnum> E codeOf(Class<E> enumClass, int code) {
         E[] enumConstants = enumClass.getEnumConstants();
         for (E e : enumConstants) {
             if (e.code() == code)

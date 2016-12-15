@@ -9,7 +9,7 @@ import com.adu.spring_test.mybatis.util.CodeEnumUtil;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
-import com.adu.spring_test.mybatis.enums.BaseEnum;
+import com.adu.spring_test.mybatis.enums.CodeBaseEnum;
 
 /**
  * mapper里字段到枚举类的映射。
@@ -27,7 +27,7 @@ import com.adu.spring_test.mybatis.enums.BaseEnum;
  *      </typeHandlers>
  * 2)在MyClassMapper.xml里直接select/update/insert。
  */
-public class EnumTypeHandler<E extends Enum<?> & BaseEnum> extends BaseTypeHandler<BaseEnum> {
+public class EnumTypeHandler<E extends Enum<?> & CodeBaseEnum> extends BaseTypeHandler<CodeBaseEnum> {
     private Class<E> clazz;
 
     public EnumTypeHandler(Class<E> enumType) {
@@ -38,7 +38,7 @@ public class EnumTypeHandler<E extends Enum<?> & BaseEnum> extends BaseTypeHandl
     }
 
     @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, BaseEnum parameter, JdbcType jdbcType)
+    public void setNonNullParameter(PreparedStatement ps, int i, CodeBaseEnum parameter, JdbcType jdbcType)
             throws SQLException {
         ps.setInt(i, parameter.code());
     }
