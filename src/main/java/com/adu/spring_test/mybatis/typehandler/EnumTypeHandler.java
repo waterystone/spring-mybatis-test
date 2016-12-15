@@ -45,24 +45,16 @@ public class EnumTypeHandler<E extends Enum<?> & CodeBaseEnum> extends BaseTypeH
 
     @Override
     public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        return this.codeOf(rs.getInt(columnName));
+        return CodeEnumUtil.codeOf(clazz, rs.getInt(columnName));
     }
 
     @Override
     public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        return this.codeOf(rs.getInt(columnIndex));
+        return CodeEnumUtil.codeOf(clazz, rs.getInt(columnIndex));
     }
 
     @Override
     public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        return this.codeOf(cs.getInt(columnIndex));
-    }
-
-    private E codeOf(int code) {
-        try {
-            return CodeEnumUtil.codeOf(clazz, code);
-        } catch (Exception var3) {
-            throw new RuntimeException(var3);
-        }
+        return CodeEnumUtil.codeOf(clazz, cs.getInt(columnIndex));
     }
 }
