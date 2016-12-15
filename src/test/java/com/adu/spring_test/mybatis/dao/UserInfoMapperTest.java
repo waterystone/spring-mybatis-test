@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.adu.spring_test.mybatis.enums.SexEnum;
 import com.adu.spring_test.mybatis.model.ProfInfo;
 import com.adu.spring_test.mybatis.model.UserInfo;
+import com.adu.spring_test.mybatis.util.CodeEnumUtil;
 import com.google.common.collect.Lists;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -56,8 +57,8 @@ public class UserInfoMapperTest {
     @Test
     public void getUsersBetweenTime() {
         Date now = new Date(), start = DateUtils.addDays(now, -365);
-        int offset = 0, limit = 3;
-        List<UserInfo> users = userInfoMapper.getUsersBetweenTime(start, now, new RowBounds(offset,limit));
+        int offset = 0, limit = 10;
+        List<UserInfo> users = userInfoMapper.getUsersBetweenTime(start, now, new RowBounds(offset, limit));
 
         for (UserInfo user : users) {
             logger.debug(user.toString());
@@ -105,7 +106,7 @@ public class UserInfoMapperTest {
     private UserInfo mockUserInfo() {
         UserInfo res = new UserInfo();
         res.setUserName("adu-" + System.currentTimeMillis());
-        res.setSex(SexEnum.codeOf((int) System.currentTimeMillis() % 3));
+        res.setSex(CodeEnumUtil.codeOf(SexEnum.class, (int) System.currentTimeMillis() % 3));
         res.setAge(20 + new Random().nextInt(20));
         res.setProfInfo(new ProfInfo(170 + 10 * new Random().nextDouble(), 80 + 10 * new Random().nextDouble(),
                 Lists.newArrayList("台球", "乒乓球")));

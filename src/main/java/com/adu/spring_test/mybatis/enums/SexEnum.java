@@ -17,15 +17,6 @@ public enum SexEnum implements BaseEnum {
         this.desc = desc;
     }
 
-    public static SexEnum codeOf(int code) {
-        for (SexEnum e : SexEnum.values()) {
-            if (e.code == code) {
-                return e;
-            }
-        }
-        return UNKNOWN;
-    }
-
     @Override
     public int code() {
         return code;
