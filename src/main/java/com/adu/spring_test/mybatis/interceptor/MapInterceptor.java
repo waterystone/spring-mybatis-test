@@ -53,7 +53,7 @@ public class MapInterceptor implements Interceptor {
             }
 
             for (Method method : methods) {
-                if (StringUtils.equalsIgnoreCase(method.getName(), methodName)) {// 找到当前方法的Method
+                if (StringUtils.equals(method.getName(), methodName)) {// 找到当前方法的Method
                     MapF2F mapF2F = method.getAnnotation(MapF2F.class);// 获取当前方法是否有MapF2F注解
                     if (mapF2F == null) {
                         return invocation.proceed();
