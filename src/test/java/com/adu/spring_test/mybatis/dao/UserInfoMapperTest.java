@@ -60,10 +60,10 @@ public class UserInfoMapperTest {
     public void queryUserNamesByIds() {
         List<Long> ids = Arrays.asList(1L, 2L, 3L, 4L);
 
-        Map<Long, String> id2usernameMap = userInfoMapper.queryUserNamesByIds(ids);
+        Map<Integer, String> id2usernameMap = userInfoMapper.queryUserNamesByIds(ids);
 
-        for (long id : ids) {
-            logger.debug("id={},username={}", id, id2usernameMap.get(id));
+        for (Long id : ids) {
+            logger.debug("id={},username={}", id, id2usernameMap.get(id.intValue()));
         }
     }
 
