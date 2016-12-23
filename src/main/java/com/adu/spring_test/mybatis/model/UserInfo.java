@@ -9,7 +9,7 @@ import com.adu.spring_test.mybatis.util.Stringfy;
 public class UserInfo extends Stringfy implements Serializable {
     private static final long serialVersionUID = 6323573554785370660L;
 
-    private int id;
+    private long id;
     private String userName;
     private SexEnum sex;
     private int age;
@@ -17,11 +17,11 @@ public class UserInfo extends Stringfy implements Serializable {
     private Date createTime;
     private Date updateTime;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

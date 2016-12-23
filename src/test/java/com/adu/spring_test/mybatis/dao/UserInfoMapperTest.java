@@ -3,7 +3,10 @@ package com.adu.spring_test.mybatis.dao;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -11,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -24,44 +26,56 @@ import com.google.common.collect.Lists;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext-data.xml")
 public class UserInfoMapperTest {
-    @Autowired
+    @Resource
     private UserInfoMapper userInfoMapper;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
-    public void getUserById() {
-        int id = 1;
-        UserInfo user = userInfoMapper.getUserById(id);
+    public void queryUserById() {
+        long id = 1;
+        UserInfo user = userInfoMapper.queryUserById(id);
         logger.debug("user=" + user);
     }
 
     @Test
-    public void getUserById2() {
-        int id = 1;
-        UserInfo user = userInfoMapper.getUserById2(id);
+    public void queryUserById2() {
+        long id = 1;
+        UserInfo user = userInfoMapper.queryUserById2(id);
         logger.debug("user=" + user);
     }
 
     @Test
-    public void getUsersByIds() {
-        List<Integer> ids = Arrays.asList(1, 2, 3, 4);
+    public void queryUsersByIds() {
+        List<Long> ids = Arrays.asList(1L, 2L, 3L, 4L);
 
-        List<UserInfo> users = userInfoMapper.getUsersByIds(ids);
+        Map<Long, UserInfo> userId2userInfoMap = userInfoMapper.queryUsersByIds(ids);
 
-        for (UserInfo user : users) {
-            logger.debug(user.toString());
+        for (long id : ids) {
+            logger.debug("id={},userInfo={}", id, userId2userInfoMap.get(id));
         }
     }
 
     @Test
-    public void getUsersBetweenTime() {
+    public void queryUserNamesByIds() {
+        List<Long> ids = Arrays.asList(1L, 2L, 3L, 4L);
+
+        Map<Long, String> id2usernameMap = userInfoMapper.queryUserNamesByIds(ids);
+
+        for (long id : ids) {
+            logger.debug("id={},username={}", id, id2usernameMap.get(id));
+        }
+    }
+
+    @Test
+    public void queryUsersBetweenTime() {
         Date now = new Date(), start = DateUtils.addDays(now, -365);
         int offset = 0, limit = 10;
-        List<UserInfo> users = userInfoMapper.getUsersBetweenTime(start, now, new RowBounds(offset, limit));
+        Map<Long, UserInfo> userId2userInfoMap = userInfoMapper.queryUsersBetweenTime(start, now,
+                new RowBounds(offset, limit));
 
-        for (UserInfo user : users) {
-            logger.debug(user.toString());
+        for (Map.Entry<Long, UserInfo> entry : userId2userInfoMap.entrySet()) {
+            logger.debug("id={},userInfo={}", entry.getKey(), entry.getValue());
         }
     }
 
@@ -97,7 +111,7 @@ public class UserInfoMapperTest {
 
     @Test
     public void deleteById() {
-        int id = 1;
+        long id = 1L;
         int res = userInfoMapper.deleteById(id);
         logger.debug("res=" + res);
 

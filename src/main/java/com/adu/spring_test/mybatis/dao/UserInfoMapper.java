@@ -2,11 +2,14 @@ package com.adu.spring_test.mybatis.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Repository;
 
+import com.adu.spring_test.mybatis.annotations.MapF2F;
 import com.adu.spring_test.mybatis.model.UserInfo;
 
 @Repository
@@ -18,7 +21,7 @@ public interface UserInfoMapper {
      * @param id
      * @return
      */
-    UserInfo getUserById(@Param("id") int id);
+    UserInfo queryUserById(@Param("id") long id);
 
     /**
      * 根据id获取用户信息(在mybatis.xml中指定typeHandler)
@@ -26,7 +29,7 @@ public interface UserInfoMapper {
      * @param id
      * @return
      */
-    UserInfo getUserById2(@Param("id") int id);
+    UserInfo queryUserById2(@Param("id") long id);
 
     /**
      * 根据id获取一批用户信息
@@ -34,7 +37,17 @@ public interface UserInfoMapper {
      * @param ids
      * @return
      */
-    List<UserInfo> getUsersByIds(@Param("ids") List<Integer> ids);
+    @MapKey("id")
+    Map<Long, UserInfo> queryUsersByIds(@Param("ids") List<Long> ids);
+
+    /**
+     * 批量获取用户姓名
+     * 
+     * @param ids
+     * @return key为ID，value为username
+     */
+    @MapF2F()
+    Map<Long, String> queryUserNamesByIds(@Param("ids") List<Long> ids);
 
     /**
      * 获取某段时间插入的用户
@@ -43,7 +56,8 @@ public interface UserInfoMapper {
      * @param endTime 结束时间
      * @return
      */
-    List<UserInfo> getUsersBetweenTime(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
+    @MapKey("id")
+    Map<Long, UserInfo> queryUsersBetweenTime(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
             @Param("rowBounds") RowBounds rowBounds);
 
     /**
@@ -84,5 +98,5 @@ public interface UserInfoMapper {
      * @param id
      * @return
      */
-    int deleteById(@Param("id") int id);
+    int deleteById(@Param("id") long id);
 }

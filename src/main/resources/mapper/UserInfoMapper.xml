@@ -12,21 +12,21 @@
 		id,user_name,sex,age,prof_info,create_time,update_time
 	</sql>
 
-	<select id="getUserById" resultMap="userInfoResultMap">
+	<select id="queryUserById" resultMap="userInfoResultMap">
 		SELECT
 		<include refid="baseCols" />
 		FROM user_info
 		WHERE id = #{id}
 	</select>
 
-	<select id="getUserById2" resultType="com.adu.spring_test.mybatis.model.UserInfo">
+	<select id="queryUserById2" resultType="com.adu.spring_test.mybatis.model.UserInfo">
 		SELECT
 		<include refid="baseCols" />
 		FROM user_info
 		WHERE id = #{id}
 	</select>
 
-	<select id="getUsersByIds" resultMap="userInfoResultMap">
+	<select id="queryUsersByIds" resultMap="userInfoResultMap">
 		SELECT
 		<include refid="baseCols" />
 		FROM user_info
@@ -36,7 +36,16 @@
 		</foreach>
 	</select>
 
-	<select id="getUsersBetweenTime" resultType="com.adu.spring_test.mybatis.model.UserInfo">
+	<select id="queryUserNamesByIds" resultType="map">
+		SELECT id, user_name
+		FROM user_info
+		WHERE id IN
+		<foreach collection="ids" open="(" close=")" separator="," item="item">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="queryUsersBetweenTime" resultType="com.adu.spring_test.mybatis.model.UserInfo">
 		SELECT
 		<include refid="baseCols" />
 		FROM user_info

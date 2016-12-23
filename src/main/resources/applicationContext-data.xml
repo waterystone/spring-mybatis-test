@@ -32,6 +32,11 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="configLocation" value="classpath:mybatis/mybatis-data-config.xml" />
 		<property name="mapperLocations" value="classpath:mapper/**/*.xml" />
+		<property name="plugins">
+			<array>
+				<bean class="com.adu.spring_test.mybatis.interceptor.MapInterceptor"/>
+			</array>
+		</property>
 	</bean>
 
 	<!-- mapper scanner configurer -->
