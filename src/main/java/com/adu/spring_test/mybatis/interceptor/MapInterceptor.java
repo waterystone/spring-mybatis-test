@@ -50,28 +50,50 @@ public class MapInterceptor implements Interceptor {
             String className = StringUtils.substringBeforeLast(mappedStatement.getId(), ".");// 当前类
             String methodName = StringUtils.substringAfterLast(mappedStatement.getId(), ".");// 当前方法
 
-            Method[] methods = Class.forName(className).getDeclaredMethods();// 该类所有声明的方法
+            Method method = getMapF2FMethod(className, methodName);
 
-            if (methods == null) {
+            if (method == null) {
                 return invocation.proceed();
             }
 
-            for (Method method : methods) {
-                if (StringUtils.equals(method.getName(), methodName)) {// 找到当前方法的Method
-                    MapF2F mapF2F = method.getAnnotation(MapF2F.class);// 获取当前方法是否有MapF2F注解
-                    if (mapF2F == null) {
-                        return invocation.proceed();
-                    }
+            // 如果MapF2F注解，则这里对结果进行转换。
+            Statement statement = (Statement) invocation.getArgs()[0];
+            Pair<Type, Type> kvTypePair = getKVTypeOfReturnMap(method);
+            return result2Map(statement, kvTypePair);
+        }
 
-                    // 如果MapF2F注解，则这里对结果进行转换。
-                    Statement statement = (Statement) invocation.getArgs()[0];
-                    Pair<Type, Type> kvTypePair = getKVTypeOfReturnMap(method);
-                    return result2Map(statement, kvTypePair);
+        return invocation.proceed();
+    }
+
+    /**
+     * 找到与指定函数名匹配，且注解MapF2F的函数。
+     * 
+     * @param className
+     * @param methodName
+     * @return
+     * @throws Throwable
+     */
+    private Method getMapF2FMethod(String className, String methodName) throws Throwable {
+        Method[] methods = Class.forName(className).getDeclaredMethods();// 该类所有声明的方法
+        if (methods == null) {
+            return null;
+        }
+
+        Method res = null;
+        for (Method method : methods) {
+            if (StringUtils.equals(method.getName(), methodName)) {
+                if (res != null) {// 一个Mapper里，相同方法名，不能多个同时注解MapF2F
+                    throw new RuntimeException("[ERROR-MapF2F-too-many-same-methodName]className=" + className
+                            + ",methodName={}" + methodName);
+                }
+
+                if (method.getAnnotation(MapF2F.class) != null) {
+                    res = method;
                 }
             }
         }
 
-        return invocation.proceed();
+        return res;
     }
 
     @Override
