@@ -47,7 +47,7 @@ public interface UserInfoMapper {
      * @return key为ID，value为username
      */
     @MapF2F()
-    Map<Integer, String> queryUserNamesByIds(@Param("ids") List<Long> ids);
+    Map<Long, String> queryUserNamesByIds(@Param("ids") List<Long> ids);
 
     /**
      * 获取某段时间插入的用户
