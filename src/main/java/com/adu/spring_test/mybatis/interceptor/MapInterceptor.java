@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +59,7 @@ public class MapInterceptor implements Interceptor {
 
             // 如果MapF2F注解，则这里对结果进行转换。
             Statement statement = (Statement) invocation.getArgs()[0];
-            Pair<Type, Type> kvTypePair = getKVTypeOfReturnMap(method);
+            Pair<Type, Type> kvTypePair = getKVTypeOfReturnMap(method);// 获取返回Map里key-value的类型。
             return result2Map(statement, kvTypePair);
         }
 
@@ -79,21 +80,15 @@ public class MapInterceptor implements Interceptor {
             return null;
         }
 
-        Method res = null;
         for (Method method : methods) {
             if (StringUtils.equals(method.getName(), methodName)) {
-                if (res != null) {// 一个Mapper里，相同方法名，不能多个同时注解MapF2F
-                    throw new RuntimeException("[ERROR-MapF2F-too-many-same-methodName]className=" + className
-                            + ",methodName={}" + methodName);
-                }
-
                 if (method.getAnnotation(MapF2F.class) != null) {
-                    res = method;
+                    return method;
                 }
             }
         }
 
-        return res;
+        return null;
     }
 
     @Override
@@ -125,7 +120,8 @@ public class MapInterceptor implements Interceptor {
             return new Pair<>(parameterizedType.getActualTypeArguments()[0],
                     parameterizedType.getActualTypeArguments()[1]);
         }
-        return null;
+
+        return new Pair<>(null, null);
     }
 
     /**
@@ -167,6 +163,10 @@ public class MapInterceptor implements Interceptor {
      * @return
      */
     private Object convertType(Object obj, Type type) {
+        if (Objects.isNull(obj) || Objects.isNull(type)) {
+            return obj;
+        }
+
         // 如果DB中使用bigint而KV指定基本数值类型，就需要人工将BigInteger转为基本数值类型处理
         if (obj instanceof BigInteger) {
             if (Long.class.equals(type)) {// bigint-->Long
