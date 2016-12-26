@@ -3,14 +3,20 @@ package com.adu.spring_test.mybatis.interceptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.math.BigInteger;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.sql.Array;
+import java.sql.Date;
+import java.sql.Ref;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.adu.spring_test.mybatis.annotations.MapF2F;
 import com.adu.spring_test.mybatis.util.ReflectUtil;
+import com.mysql.jdbc.SQLError;
 
 import javafx.util.Pair;
 
@@ -59,11 +66,21 @@ public class MapInterceptor implements Interceptor {
 
             // 如果MapF2F注解，则这里对结果进行转换。
             Statement statement = (Statement) invocation.getArgs()[0];
-            Pair<Type, Type> kvTypePair = getKVTypeOfReturnMap(method);// 获取返回Map里key-value的类型。
+            Pair<Class<?>, Class<?>> kvTypePair = getKVTypeOfReturnMap(method);// 获取返回Map里key-value的类型。
             return result2Map(statement, kvTypePair);
         }
 
         return invocation.proceed();
+    }
+
+    @Override
+    public Object plugin(Object obj) {
+        return Plugin.wrap(obj, this);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+
     }
 
     /**
@@ -91,23 +108,13 @@ public class MapInterceptor implements Interceptor {
         return null;
     }
 
-    @Override
-    public Object plugin(Object obj) {
-        return Plugin.wrap(obj, this);
-    }
-
-    @Override
-    public void setProperties(Properties properties) {
-
-    }
-
     /**
      * 获取函数返回Map中key-value的类型
      * 
      * @param method
      * @return left为key的类型，right为value的类型
      */
-    private Pair<Type, Type> getKVTypeOfReturnMap(Method method) {
+    private Pair<Class<?>, Class<?>> getKVTypeOfReturnMap(Method method) {
         Type returnType = method.getGenericReturnType();
 
         if (returnType instanceof ParameterizedType) {
@@ -117,8 +124,8 @@ public class MapInterceptor implements Interceptor {
                         "[ERROR-MapF2F-return-map-type]使用MapF2F,返回类型必须是java.util.Map类型！！！method=" + method);
             }
 
-            return new Pair<>(parameterizedType.getActualTypeArguments()[0],
-                    parameterizedType.getActualTypeArguments()[1]);
+            return new Pair<>((Class<?>) parameterizedType.getActualTypeArguments()[0],
+                    (Class<?>) parameterizedType.getActualTypeArguments()[1]);
         }
 
         return new Pair<>(null, null);
@@ -132,7 +139,7 @@ public class MapInterceptor implements Interceptor {
      * @return
      * @throws Throwable
      */
-    private Object result2Map(Statement statement, Pair<Type, Type> kvTypePair) throws Throwable {
+    private Object result2Map(Statement statement, Pair<Class<?>, Class<?>> kvTypePair) throws Throwable {
         ResultSet resultSet = statement.getResultSet();
         if (resultSet == null) {
             return null;
@@ -141,12 +148,10 @@ public class MapInterceptor implements Interceptor {
         List<Object> res = new ArrayList();
 
         Map<Object, Object> map = new HashMap();
-        while (resultSet.next()) {
-            Object key = resultSet.getObject(1);
-            Object value = resultSet.getObject(2);
 
-            key = convertType(key, kvTypePair.getKey());
-            value = convertType(value, kvTypePair.getValue());
+        while (resultSet.next()) {
+            Object key = this.getObject(resultSet, 1, kvTypePair.getKey());
+            Object value = this.getObject(resultSet, 2, kvTypePair.getValue());
 
             map.put(key, value);// 第一列作为key,第二列作为value。
         }
@@ -156,28 +161,74 @@ public class MapInterceptor implements Interceptor {
     }
 
     /**
-     * 有些DB字段到KV类型的映射需要手工转换，不然后续get会出问题！！！
+     * 结果类型转换。参考：ResultSetImpl.getObject(int columnIndex, Class<T> type)。<br/>
+     * 注:新jdbc的ResultSet接口是有public <T> T getObject(int columnIndex, Class<T>
+     * type)方法的，但commons-dbcp（DelegatingResultSet）、druid（DruidPooledResultSet）的实现类并没有实现这一方法；而spring（DriverManagerDataSource）、C3P0（ComboPooledDataSource）,其用的JDBC4ResultSet是支持public
+     * <T> T getObject(int columnIndex, Class<T> type)方法的。<br/>
+     * 这里为了本类的通用，所以统一实现了本方法。
      * 
-     * @param obj Mybatis自己将字段转过来的对象
-     * @param type 函数返回map内指定的类型
+     * @param resultSet
+     * @param columnIndex
+     * @param type
+     * @param <T>
      * @return
+     * @throws SQLException
      */
-    private Object convertType(Object obj, Type type) {
-        if (Objects.isNull(obj) || Objects.isNull(type)) {
-            return obj;
-        }
-
-        // 如果DB中使用bigint而KV指定基本数值类型，就需要人工将BigInteger转为基本数值类型处理
-        if (obj instanceof BigInteger) {
-            if (Long.class.equals(type)) {// bigint-->Long
-                return Long.valueOf(((BigInteger) obj).longValue());
+    private <T> T getObject(ResultSet resultSet, int columnIndex, Class<T> type) throws SQLException {
+        if (type == null) {
+            throw SQLError.createSQLException("Type parameter can not be null", "S1009", null);
+        } else if (type.equals(String.class)) {
+            return (T) resultSet.getString(columnIndex);
+        } else if (type.equals(BigDecimal.class)) {
+            return (T) resultSet.getBigDecimal(columnIndex);
+        } else if (!type.equals(Boolean.class) && !type.equals(Boolean.TYPE)) {
+            if (!type.equals(Integer.class) && !type.equals(Integer.TYPE)) {
+                if (!type.equals(Long.class) && !type.equals(Long.TYPE)) {
+                    if (!type.equals(Float.class) && !type.equals(Float.TYPE)) {
+                        if (!type.equals(Double.class) && !type.equals(Double.TYPE)) {
+                            if (type.equals(byte[].class)) {
+                                return (T) resultSet.getBytes(columnIndex);
+                            } else if (type.equals(Date.class)) {
+                                return (T) resultSet.getDate(columnIndex);
+                            } else if (type.equals(Time.class)) {
+                                return (T) resultSet.getTime(columnIndex);
+                            } else if (type.equals(Timestamp.class)) {
+                                return (T) resultSet.getTimestamp(columnIndex);
+                            } else if (type.equals(com.mysql.jdbc.Clob.class)) {
+                                return (T) resultSet.getClob(columnIndex);
+                            } else if (type.equals(com.mysql.jdbc.Blob.class)) {
+                                return (T) resultSet.getBlob(columnIndex);
+                            } else if (type.equals(Array.class)) {
+                                return (T) resultSet.getArray(columnIndex);
+                            } else if (type.equals(Ref.class)) {
+                                return (T) resultSet.getRef(columnIndex);
+                            } else if (type.equals(URL.class)) {
+                                return (T) resultSet.getURL(columnIndex);
+                            } else {
+                                try {
+                                    return (T) resultSet.getObject(columnIndex);
+                                } catch (ClassCastException var5) {
+                                    SQLException sqlEx = SQLError.createSQLException(
+                                            "Conversion not supported for type " + type.getName(), "S1009", null);
+                                    sqlEx.initCause(var5);
+                                    throw sqlEx;
+                                }
+                            }
+                        } else {
+                            return (T) Double.valueOf(resultSet.getDouble(columnIndex));
+                        }
+                    } else {
+                        return (T) Float.valueOf(resultSet.getFloat(columnIndex));
+                    }
+                } else {
+                    return (T) Long.valueOf(resultSet.getLong(columnIndex));
+                }
+            } else {
+                return (T) Integer.valueOf(resultSet.getInt(columnIndex));
             }
-
-            if (Integer.class.equals(type)) {// bigint-->Integer
-                return Integer.valueOf(((BigInteger) obj).intValue());
-            }
+        } else {
+            return (T) Boolean.valueOf(resultSet.getBoolean(columnIndex));
         }
-
-        return obj;
     }
+
 }

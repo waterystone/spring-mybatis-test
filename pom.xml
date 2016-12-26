@@ -19,6 +19,8 @@
 
 		<org.springframework.version>4.2.2.RELEASE</org.springframework.version>
 		<commons-dbcp.version>1.4</commons-dbcp.version>
+		<druid.version>1.0.27</druid.version>
+		<c3p0.version>0.9.5.2</c3p0.version>
 		<mysql.version>5.1.29</mysql.version>
 
 		<org.mybatis.version>3.4.1</org.mybatis.version>
@@ -106,6 +108,16 @@
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
 			<version>${commons-dbcp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>${druid.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>${c3p0.version}</version>
 		</dependency>
 
 		<!-- mysql驱动 -->

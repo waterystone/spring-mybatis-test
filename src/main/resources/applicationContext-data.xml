@@ -7,25 +7,64 @@
 
 	<context:property-placeholder location="classpath:jdbc.properties" />
 
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
+	<!--Spring DataSource-->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${mysql.jdbc.driverClassName}" />
 		<property name="url" value="${mysql.jdbc.url}" />
 		<property name="username" value="${mysql.jdbc.username}" />
 		<property name="password" value="${mysql.jdbc.password}" />
-		<property name="maxActive" value="300" />
-		<property name="maxIdle" value="10" />
-		<property name="maxWait" value="5000" />
-		<property name="logAbandoned" value="true" />
-		<property name="removeAbandoned" value="true" />
-		<property name="removeAbandonedTimeout" value="60" />
-		<property name="testWhileIdle" value="true" />
-		<property name="validationQuery" value="select 1" />
-		<!-- <property name="validationQueryTimeout" value="1"/> -->
-		<property name="timeBetweenEvictionRunsMillis" value="5000" />
-		<property name="testOnBorrow" value="true" />
-		<property name="testOnReturn" value="true" />
 	</bean>
+
+	<!--commons-dbcp DataSource-->
+	<!--<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"-->
+		  <!--destroy-method="close">-->
+		<!--<property name="driverClassName" value="${mysql.jdbc.driverClassName}" />-->
+		<!--<property name="url" value="${mysql.jdbc.url}" />-->
+		<!--<property name="username" value="${mysql.jdbc.username}" />-->
+		<!--<property name="password" value="${mysql.jdbc.password}" />-->
+		<!--<property name="maxActive" value="300" />-->
+		<!--<property name="maxIdle" value="10" />-->
+		<!--<property name="maxWait" value="5000" />-->
+		<!--<property name="logAbandoned" value="true" />-->
+		<!--<property name="removeAbandoned" value="true" />-->
+		<!--<property name="removeAbandonedTimeout" value="60" />-->
+		<!--<property name="testWhileIdle" value="true" />-->
+		<!--<property name="validationQuery" value="select 1" />-->
+		<!--&lt;!&ndash; <property name="validationQueryTimeout" value="1"/> &ndash;&gt;-->
+		<!--<property name="timeBetweenEvictionRunsMillis" value="5000" />-->
+		<!--<property name="testOnBorrow" value="true" />-->
+		<!--<property name="testOnReturn" value="true" />-->
+	<!--</bean>-->
+
+	<!--Druid DataSource-->
+	<!--<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"-->
+		  <!--destroy-method="close">-->
+		<!--<property name="driverClassName" value="${mysql.jdbc.driverClassName}" />-->
+		<!--<property name="url" value="${mysql.jdbc.url}" />-->
+		<!--<property name="username" value="${mysql.jdbc.username}" />-->
+		<!--<property name="password" value="${mysql.jdbc.password}" />-->
+		<!--<property name="maxActive" value="300" />-->
+		<!--<property name="maxIdle" value="10" />-->
+		<!--<property name="maxWait" value="5000" />-->
+		<!--<property name="logAbandoned" value="true" />-->
+		<!--<property name="removeAbandoned" value="true" />-->
+		<!--<property name="removeAbandonedTimeout" value="60" />-->
+		<!--<property name="testWhileIdle" value="true" />-->
+		<!--<property name="validationQuery" value="select 1" />-->
+		<!--&lt;!&ndash; <property name="validationQueryTimeout" value="1"/> &ndash;&gt;-->
+		<!--<property name="timeBetweenEvictionRunsMillis" value="5000" />-->
+		<!--<property name="testOnBorrow" value="true" />-->
+		<!--<property name="testOnReturn" value="true" />-->
+	<!--</bean>-->
+
+	<!--c3p0 DataSource-->
+	<!--<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"-->
+		  <!--destroy-method="close">-->
+		<!--<property name="driverClass" value="${mysql.jdbc.driverClassName}" />-->
+		<!--<property name="jdbcUrl" value="${mysql.jdbc.url}" />-->
+		<!--<property name="user" value="${mysql.jdbc.username}" />-->
+		<!--<property name="password" value="${mysql.jdbc.password}" />-->
+	<!--</bean>-->
 
 	<!-- session factory -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
