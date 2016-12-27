@@ -170,43 +170,42 @@ public class MapInterceptor implements Interceptor {
      * @param resultSet
      * @param columnIndex
      * @param type
-     * @param <T>
      * @return
      * @throws SQLException
      */
-    private <T> T getObject(ResultSet resultSet, int columnIndex, Class<T> type) throws SQLException {
+    private Object getObject(ResultSet resultSet, int columnIndex, Class<?> type) throws SQLException {
         if (type == null) {
-            throw SQLError.createSQLException("Type parameter can not be null", "S1009", null);
+            return resultSet.getObject(columnIndex);
         } else if (type.equals(String.class)) {
-            return (T) resultSet.getString(columnIndex);
+            return resultSet.getString(columnIndex);
         } else if (type.equals(BigDecimal.class)) {
-            return (T) resultSet.getBigDecimal(columnIndex);
+            return resultSet.getBigDecimal(columnIndex);
         } else if (!type.equals(Boolean.class) && !type.equals(Boolean.TYPE)) {
             if (!type.equals(Integer.class) && !type.equals(Integer.TYPE)) {
                 if (!type.equals(Long.class) && !type.equals(Long.TYPE)) {
                     if (!type.equals(Float.class) && !type.equals(Float.TYPE)) {
                         if (!type.equals(Double.class) && !type.equals(Double.TYPE)) {
                             if (type.equals(byte[].class)) {
-                                return (T) resultSet.getBytes(columnIndex);
+                                return resultSet.getBytes(columnIndex);
                             } else if (type.equals(Date.class)) {
-                                return (T) resultSet.getDate(columnIndex);
+                                return resultSet.getDate(columnIndex);
                             } else if (type.equals(Time.class)) {
-                                return (T) resultSet.getTime(columnIndex);
+                                return resultSet.getTime(columnIndex);
                             } else if (type.equals(Timestamp.class)) {
-                                return (T) resultSet.getTimestamp(columnIndex);
+                                return resultSet.getTimestamp(columnIndex);
                             } else if (type.equals(com.mysql.jdbc.Clob.class)) {
-                                return (T) resultSet.getClob(columnIndex);
+                                return resultSet.getClob(columnIndex);
                             } else if (type.equals(com.mysql.jdbc.Blob.class)) {
-                                return (T) resultSet.getBlob(columnIndex);
+                                return resultSet.getBlob(columnIndex);
                             } else if (type.equals(Array.class)) {
-                                return (T) resultSet.getArray(columnIndex);
+                                return resultSet.getArray(columnIndex);
                             } else if (type.equals(Ref.class)) {
-                                return (T) resultSet.getRef(columnIndex);
+                                return resultSet.getRef(columnIndex);
                             } else if (type.equals(URL.class)) {
-                                return (T) resultSet.getURL(columnIndex);
+                                return resultSet.getURL(columnIndex);
                             } else {
                                 try {
-                                    return (T) resultSet.getObject(columnIndex);
+                                    return resultSet.getObject(columnIndex);
                                 } catch (ClassCastException var5) {
                                     SQLException sqlEx = SQLError.createSQLException(
                                             "Conversion not supported for type " + type.getName(), "S1009", null);
@@ -215,19 +214,19 @@ public class MapInterceptor implements Interceptor {
                                 }
                             }
                         } else {
-                            return (T) Double.valueOf(resultSet.getDouble(columnIndex));
+                            return Double.valueOf(resultSet.getDouble(columnIndex));
                         }
                     } else {
-                        return (T) Float.valueOf(resultSet.getFloat(columnIndex));
+                        return Float.valueOf(resultSet.getFloat(columnIndex));
                     }
                 } else {
-                    return (T) Long.valueOf(resultSet.getLong(columnIndex));
+                    return Long.valueOf(resultSet.getLong(columnIndex));
                 }
             } else {
-                return (T) Integer.valueOf(resultSet.getInt(columnIndex));
+                return Integer.valueOf(resultSet.getInt(columnIndex));
             }
         } else {
-            return (T) Boolean.valueOf(resultSet.getBoolean(columnIndex));
+            return Boolean.valueOf(resultSet.getBoolean(columnIndex));
         }
     }
 
