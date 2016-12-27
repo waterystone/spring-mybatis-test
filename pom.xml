@@ -21,7 +21,7 @@
 		<commons-dbcp.version>1.4</commons-dbcp.version>
 		<druid.version>1.0.27</druid.version>
 		<c3p0.version>0.9.5.2</c3p0.version>
-		<mysql.version>5.1.29</mysql.version>
+		<mysql.version>5.1.40</mysql.version>
 
 		<org.mybatis.version>3.4.1</org.mybatis.version>
 		<mybatis-spring.version>1.3.0</mybatis-spring.version>

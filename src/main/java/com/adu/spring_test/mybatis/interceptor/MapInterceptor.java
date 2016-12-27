@@ -160,10 +160,16 @@ public class MapInterceptor implements Interceptor {
     }
 
     /**
-     * 结果类型转换。参考：ResultSetImpl.getObject(int columnIndex, Class<T> type)。<br/>
-     * 注:新jdbc的ResultSet接口是有public <T> T getObject(int columnIndex, Class<T>
-     * type)方法的，但commons-dbcp（DelegatingResultSet）、druid（DruidPooledResultSet）的实现类并没有实现这一方法；而spring（DriverManagerDataSource）、C3P0（ComboPooledDataSource）,其用的JDBC4ResultSet是支持public
-     * <T> T getObject(int columnIndex, Class<T> type)方法的。<br/>
+     * 结果类型转换。参考：com.mysql.jdbc.ResultSetImpl.getObject(int columnIndex, Class<T> type)。
+     * <p>
+     * 新jdbc的{@link ResultSet}接口是有
+     *
+     * <pre>
+     * public <T> T getObject(int columnIndex, Class<T> type)
+     * </pre>
+     *
+     * 方法的，但commons-dbcp（DelegatingResultSet）、druid（DruidPooledResultSet）的实现类并没有实现这一方法；而spring（DriverManagerDataSource）、C3P0（ComboPooledDataSource）,其用的JDBC4ResultSet是支持此方法的。
+     * <p>
      * 这里为了本类的通用，所以统一实现了本方法。
      * 
      * @param resultSet
@@ -171,6 +177,7 @@ public class MapInterceptor implements Interceptor {
      * @param type
      * @return
      * @throws SQLException
+     * @see com.mysql.jdbc.ResultSetImpl#getObject(int, Class)
      */
     private Object getObject(ResultSet resultSet, int columnIndex, Class<?> type) throws SQLException {
         if (type == null) {
@@ -194,7 +201,7 @@ public class MapInterceptor implements Interceptor {
         if (type.equals(Float.class) || type.equals(Float.TYPE)) {
             return Float.valueOf(resultSet.getFloat(columnIndex));
         }
-        if (type.equals(Double.class)||type.equals(Double.TYPE)) {
+        if (type.equals(Double.class) || type.equals(Double.TYPE)) {
             return Double.valueOf(resultSet.getDouble(columnIndex));
         }
         if (type.equals(byte[].class)) {
@@ -208,6 +215,9 @@ public class MapInterceptor implements Interceptor {
         }
         if (type.equals(Timestamp.class)) {
             return resultSet.getTimestamp(columnIndex);
+        }
+        if (type.equals(java.util.Date.class)) {
+            return new java.util.Date(resultSet.getTimestamp(columnIndex).getTime());
         }
         if (type.equals(com.mysql.jdbc.Clob.class)) {
             return resultSet.getClob(columnIndex);

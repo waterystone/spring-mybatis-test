@@ -49,6 +49,9 @@ public interface UserInfoMapper {
     @MapF2F()
     Map<Long, String> queryUserNamesByIds(@Param("ids") List<Long> ids);
 
+    @MapF2F()
+    Map<Long, Date> queryCreateTimesByIds(@Param("ids") List<Long> ids);
+
     /**
      * 获取某段时间插入的用户
      * 

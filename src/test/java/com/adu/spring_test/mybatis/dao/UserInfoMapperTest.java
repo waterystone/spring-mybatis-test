@@ -68,6 +68,17 @@ public class UserInfoMapperTest {
     }
 
     @Test
+    public void queryCreateTimesByIds() {
+        List<Long> ids = Arrays.asList(1L, 2L, 3L, 4L);
+
+        Map<Long, Date> id2createTimeMap = userInfoMapper.queryCreateTimesByIds(ids);
+
+        for (Long id : ids) {
+            logger.debug("id={},createTime={}", id, id2createTimeMap.get(id));
+        }
+    }
+
+    @Test
     public void queryUsersBetweenTime() {
         Date now = new Date(), start = DateUtils.addDays(now, -365);
         int offset = 0, limit = 10;
