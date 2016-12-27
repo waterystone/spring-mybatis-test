@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import com.adu.spring_test.mybatis.annotations.MapF2F;
 import com.adu.spring_test.mybatis.util.ReflectUtil;
-import com.mysql.jdbc.SQLError;
 
 import javafx.util.Pair;
 
@@ -176,58 +175,57 @@ public class MapInterceptor implements Interceptor {
     private Object getObject(ResultSet resultSet, int columnIndex, Class<?> type) throws SQLException {
         if (type == null) {
             return resultSet.getObject(columnIndex);
-        } else if (type.equals(String.class)) {
+        }
+        if (type.equals(String.class)) {
             return resultSet.getString(columnIndex);
-        } else if (type.equals(BigDecimal.class)) {
+        }
+        if (type.equals(BigDecimal.class)) {
             return resultSet.getBigDecimal(columnIndex);
-        } else if (!type.equals(Boolean.class) && !type.equals(Boolean.TYPE)) {
-            if (!type.equals(Integer.class) && !type.equals(Integer.TYPE)) {
-                if (!type.equals(Long.class) && !type.equals(Long.TYPE)) {
-                    if (!type.equals(Float.class) && !type.equals(Float.TYPE)) {
-                        if (!type.equals(Double.class) && !type.equals(Double.TYPE)) {
-                            if (type.equals(byte[].class)) {
-                                return resultSet.getBytes(columnIndex);
-                            } else if (type.equals(Date.class)) {
-                                return resultSet.getDate(columnIndex);
-                            } else if (type.equals(Time.class)) {
-                                return resultSet.getTime(columnIndex);
-                            } else if (type.equals(Timestamp.class)) {
-                                return resultSet.getTimestamp(columnIndex);
-                            } else if (type.equals(com.mysql.jdbc.Clob.class)) {
-                                return resultSet.getClob(columnIndex);
-                            } else if (type.equals(com.mysql.jdbc.Blob.class)) {
-                                return resultSet.getBlob(columnIndex);
-                            } else if (type.equals(Array.class)) {
-                                return resultSet.getArray(columnIndex);
-                            } else if (type.equals(Ref.class)) {
-                                return resultSet.getRef(columnIndex);
-                            } else if (type.equals(URL.class)) {
-                                return resultSet.getURL(columnIndex);
-                            } else {
-                                try {
-                                    return resultSet.getObject(columnIndex);
-                                } catch (ClassCastException var5) {
-                                    SQLException sqlEx = SQLError.createSQLException(
-                                            "Conversion not supported for type " + type.getName(), "S1009", null);
-                                    sqlEx.initCause(var5);
-                                    throw sqlEx;
-                                }
-                            }
-                        } else {
-                            return Double.valueOf(resultSet.getDouble(columnIndex));
-                        }
-                    } else {
-                        return Float.valueOf(resultSet.getFloat(columnIndex));
-                    }
-                } else {
-                    return Long.valueOf(resultSet.getLong(columnIndex));
-                }
-            } else {
-                return Integer.valueOf(resultSet.getInt(columnIndex));
-            }
-        } else {
+        }
+        if (type.equals(Boolean.class) || type.equals(Boolean.TYPE)) {
             return Boolean.valueOf(resultSet.getBoolean(columnIndex));
         }
+        if (type.equals(Integer.class) || type.equals(Integer.TYPE)) {
+            return Integer.valueOf(resultSet.getInt(columnIndex));
+        }
+        if (type.equals(Long.class) || type.equals(Long.TYPE)) {
+            return Long.valueOf(resultSet.getLong(columnIndex));
+        }
+        if (type.equals(Float.class) || type.equals(Float.TYPE)) {
+            return Float.valueOf(resultSet.getFloat(columnIndex));
+        }
+        if (type.equals(Double.class)||type.equals(Double.TYPE)) {
+            return Double.valueOf(resultSet.getDouble(columnIndex));
+        }
+        if (type.equals(byte[].class)) {
+            return resultSet.getBytes(columnIndex);
+        }
+        if (type.equals(Date.class)) {
+            return resultSet.getDate(columnIndex);
+        }
+        if (type.equals(Time.class)) {
+            return resultSet.getTime(columnIndex);
+        }
+        if (type.equals(Timestamp.class)) {
+            return resultSet.getTimestamp(columnIndex);
+        }
+        if (type.equals(com.mysql.jdbc.Clob.class)) {
+            return resultSet.getClob(columnIndex);
+        }
+        if (type.equals(com.mysql.jdbc.Blob.class)) {
+            return resultSet.getBlob(columnIndex);
+        }
+        if (type.equals(Array.class)) {
+            return resultSet.getArray(columnIndex);
+        }
+        if (type.equals(Ref.class)) {
+            return resultSet.getRef(columnIndex);
+        }
+        if (type.equals(URL.class)) {
+            return resultSet.getURL(columnIndex);
+        }
+
+        return resultSet.getObject(columnIndex);
     }
 
 }
