@@ -3,16 +3,9 @@ package com.adu.spring_test.mybatis.interceptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.sql.Array;
-import java.sql.Date;
-import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +21,8 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,18 +50,19 @@ public class MapInterceptor implements Interceptor {
             MappedStatement mappedStatement = ReflectUtil.getFieldValue(defaultResultSetHandler, "mappedStatement");
 
             String className = StringUtils.substringBeforeLast(mappedStatement.getId(), ".");// 当前类
-            String methodName = StringUtils.substringAfterLast(mappedStatement.getId(), ".");// 当前方法
+            String currentMethodName = StringUtils.substringAfterLast(mappedStatement.getId(), ".");// 当前方法
 
-            Method method = getMapF2FMethod(className, methodName);
+            Method method = findMethod(className, currentMethodName);// 获取当前Method
 
-            if (method == null) {
+            if (method == null || method.getAnnotation(MapF2F.class) == null) {// 如果当前Method没有注解MapF2F
                 return invocation.proceed();
             }
 
-            // 如果MapF2F注解，则这里对结果进行转换。
+            // 如果有MapF2F注解，则这里对结果进行拦截并转换
             Statement statement = (Statement) invocation.getArgs()[0];
-            Pair<Class<?>, Class<?>> kvTypePair = getKVTypeOfReturnMap(method);// 获取返回Map里key-value的类型。
-            return result2Map(statement, kvTypePair);
+            Pair<Class<?>, Class<?>> kvTypePair = getKVTypeOfReturnMap(method);// 获取返回Map里key-value的类型
+            TypeHandlerRegistry typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();// 获取各种TypeHander的注册器
+            return result2Map(statement, typeHandlerRegistry, kvTypePair);
         }
 
         return invocation.proceed();
@@ -83,24 +79,22 @@ public class MapInterceptor implements Interceptor {
     }
 
     /**
-     * 找到与指定函数名匹配，且注解MapF2F的函数。
+     * 找到与指定函数名匹配的Method。
      * 
      * @param className
-     * @param methodName
+     * @param targetMethodName
      * @return
      * @throws Throwable
      */
-    private Method getMapF2FMethod(String className, String methodName) throws Throwable {
+    private Method findMethod(String className, String targetMethodName) throws Throwable {
         Method[] methods = Class.forName(className).getDeclaredMethods();// 该类所有声明的方法
         if (methods == null) {
             return null;
         }
 
         for (Method method : methods) {
-            if (StringUtils.equals(method.getName(), methodName)) {
-                if (method.getAnnotation(MapF2F.class) != null) {
-                    return method;
-                }
+            if (StringUtils.equals(method.getName(), targetMethodName)) {
+                return method;
             }
         }
 
@@ -110,17 +104,17 @@ public class MapInterceptor implements Interceptor {
     /**
      * 获取函数返回Map中key-value的类型
      * 
-     * @param method
+     * @param mapF2FMethod
      * @return left为key的类型，right为value的类型
      */
-    private Pair<Class<?>, Class<?>> getKVTypeOfReturnMap(Method method) {
-        Type returnType = method.getGenericReturnType();
+    private Pair<Class<?>, Class<?>> getKVTypeOfReturnMap(Method mapF2FMethod) {
+        Type returnType = mapF2FMethod.getGenericReturnType();
 
         if (returnType instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) returnType;
             if (!Map.class.equals(parameterizedType.getRawType())) {
                 throw new RuntimeException(
-                        "[ERROR-MapF2F-return-map-type]使用MapF2F,返回类型必须是java.util.Map类型！！！method=" + method);
+                        "[ERROR-MapF2F-return-map-type]使用MapF2F,返回类型必须是java.util.Map类型！！！method=" + mapF2FMethod);
             }
 
             return new Pair<>((Class<?>) parameterizedType.getActualTypeArguments()[0],
@@ -134,23 +128,20 @@ public class MapInterceptor implements Interceptor {
      * 将查询结果映射成Map，其中第一个字段作为key，第二个字段作为value.
      * 
      * @param statement
-     * @param kvTypePair 函数指定返回Map key-value的类型(有些类型需要处理，比如BigInteger-->Long)
+     * @param typeHandlerRegistry MyBatis里typeHandler的注册器，方便转换成用户指定的结果类型
+     * @param kvTypePair 函数指定返回Map key-value的类型
      * @return
      * @throws Throwable
      */
-    private Object result2Map(Statement statement, Pair<Class<?>, Class<?>> kvTypePair) throws Throwable {
+    private Object result2Map(Statement statement, TypeHandlerRegistry typeHandlerRegistry,
+            Pair<Class<?>, Class<?>> kvTypePair) throws Throwable {
         ResultSet resultSet = statement.getResultSet();
-        if (resultSet == null) {
-            return null;
-        }
-
         List<Object> res = new ArrayList();
-
         Map<Object, Object> map = new HashMap();
 
         while (resultSet.next()) {
-            Object key = this.getObject(resultSet, 1, kvTypePair.getKey());
-            Object value = this.getObject(resultSet, 2, kvTypePair.getValue());
+            Object key = this.getObject(resultSet, 1, typeHandlerRegistry, kvTypePair.getKey());
+            Object value = this.getObject(resultSet, 2, typeHandlerRegistry, kvTypePair.getValue());
 
             map.put(key, value);// 第一列作为key,第二列作为value。
         }
@@ -160,82 +151,25 @@ public class MapInterceptor implements Interceptor {
     }
 
     /**
-     * 结果类型转换。参考：com.mysql.jdbc.ResultSetImpl.getObject(int columnIndex, Class<T> type)。
+     * 结果类型转换。
      * <p>
-     * 新jdbc的{@link ResultSet}接口是有
-     *
-     * <pre>
-     * public <T> T getObject(int columnIndex, Class<T> type)
-     * </pre>
-     *
-     * 方法的，但commons-dbcp（DelegatingResultSet）、druid（DruidPooledResultSet）的实现类并没有实现这一方法；而spring（DriverManagerDataSource）、C3P0（ComboPooledDataSource）,其用的JDBC4ResultSet是支持此方法的。
-     * <p>
-     * 这里为了本类的通用，所以统一实现了本方法。
+     * 这里借用注册在MyBatis的typeHander（包括自定义的），方便进行类型转换。
      * 
      * @param resultSet
-     * @param columnIndex
-     * @param type
+     * @param columnIndex 字段下标，从1开始
+     * @param typeHandlerRegistry MyBatis里typeHandler的注册器，方便转换成用户指定的结果类型
+     * @param javaType 要转换的Java类型
      * @return
      * @throws SQLException
      * @see com.mysql.jdbc.ResultSetImpl#getObject(int, Class)
      */
-    private Object getObject(ResultSet resultSet, int columnIndex, Class<?> type) throws SQLException {
-        if (type == null) {
-            return resultSet.getObject(columnIndex);
-        }
-        if (type.equals(String.class)) {
-            return resultSet.getString(columnIndex);
-        }
-        if (type.equals(BigDecimal.class)) {
-            return resultSet.getBigDecimal(columnIndex);
-        }
-        if (type.equals(Boolean.class) || type.equals(Boolean.TYPE)) {
-            return Boolean.valueOf(resultSet.getBoolean(columnIndex));
-        }
-        if (type.equals(Integer.class) || type.equals(Integer.TYPE)) {
-            return Integer.valueOf(resultSet.getInt(columnIndex));
-        }
-        if (type.equals(Long.class) || type.equals(Long.TYPE)) {
-            return Long.valueOf(resultSet.getLong(columnIndex));
-        }
-        if (type.equals(Float.class) || type.equals(Float.TYPE)) {
-            return Float.valueOf(resultSet.getFloat(columnIndex));
-        }
-        if (type.equals(Double.class) || type.equals(Double.TYPE)) {
-            return Double.valueOf(resultSet.getDouble(columnIndex));
-        }
-        if (type.equals(byte[].class)) {
-            return resultSet.getBytes(columnIndex);
-        }
-        if (type.equals(Date.class)) {
-            return resultSet.getDate(columnIndex);
-        }
-        if (type.equals(Time.class)) {
-            return resultSet.getTime(columnIndex);
-        }
-        if (type.equals(Timestamp.class)) {
-            return resultSet.getTimestamp(columnIndex);
-        }
-        if (type.equals(java.util.Date.class)) {
-            return new java.util.Date(resultSet.getTimestamp(columnIndex).getTime());
-        }
-        if (type.equals(com.mysql.jdbc.Clob.class)) {
-            return resultSet.getClob(columnIndex);
-        }
-        if (type.equals(com.mysql.jdbc.Blob.class)) {
-            return resultSet.getBlob(columnIndex);
-        }
-        if (type.equals(Array.class)) {
-            return resultSet.getArray(columnIndex);
-        }
-        if (type.equals(Ref.class)) {
-            return resultSet.getRef(columnIndex);
-        }
-        if (type.equals(URL.class)) {
-            return resultSet.getURL(columnIndex);
-        }
+    private Object getObject(ResultSet resultSet, int columnIndex, TypeHandlerRegistry typeHandlerRegistry,
+            Class<?> javaType) throws SQLException {
+        final TypeHandler<?> typeHandler = typeHandlerRegistry.hasTypeHandler(javaType)
+                ? typeHandlerRegistry.getTypeHandler(javaType) : typeHandlerRegistry.getUnknownTypeHandler();
 
-        return resultSet.getObject(columnIndex);
+        return typeHandler.getResult(resultSet, columnIndex);
+
     }
 
 }

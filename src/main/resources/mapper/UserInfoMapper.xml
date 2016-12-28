@@ -45,6 +45,15 @@
 		</foreach>
 	</select>
 
+	<select id="queryProfInfosByIds" resultType="map">
+		SELECT id, prof_info
+		FROM user_info
+		WHERE id IN
+		<foreach collection="ids" open="(" close=")" separator="," item="item">
+			#{item}
+		</foreach>
+	</select>
+
 	<select id="queryCreateTimesByIds" resultType="map">
 		SELECT id, create_time
 		FROM user_info

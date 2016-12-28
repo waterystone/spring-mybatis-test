@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -64,6 +65,17 @@ public class UserInfoMapperTest {
 
         for (Long id : ids) {
             logger.debug("id={},username={}", id, id2usernameMap.get(id));
+        }
+    }
+
+    @Test
+    public void queryProfInfosByIds() {
+        List<Long> ids = Arrays.asList(1L, 2L, 3L, 4L);
+
+        Map<Long, ProfInfo> id2profInfoMap = userInfoMapper.queryProfInfosByIds(ids);
+
+        for (Long id : ids) {
+            logger.debug("id={},profInfo={}", id, id2profInfoMap.get(id));
         }
     }
 

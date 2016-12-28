@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.adu.spring_test.mybatis.model.ProfInfo;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
@@ -48,6 +49,9 @@ public interface UserInfoMapper {
      */
     @MapF2F()
     Map<Long, String> queryUserNamesByIds(@Param("ids") List<Long> ids);
+
+    @MapF2F()
+    Map<Long, ProfInfo> queryProfInfosByIds(@Param("ids") List<Long> ids);
 
     @MapF2F()
     Map<Long, Date> queryCreateTimesByIds(@Param("ids") List<Long> ids);
