@@ -161,7 +161,6 @@ public class MapInterceptor implements Interceptor {
      * @param javaType 要转换的Java类型
      * @return
      * @throws SQLException
-     * @see com.mysql.jdbc.ResultSetImpl#getObject(int, Class)
      */
     private Object getObject(ResultSet resultSet, int columnIndex, TypeHandlerRegistry typeHandlerRegistry,
             Class<?> javaType) throws SQLException {
