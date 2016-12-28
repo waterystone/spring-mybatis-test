@@ -23,8 +23,10 @@
 		<c3p0.version>0.9.5.2</c3p0.version>
 		<mysql.version>5.1.40</mysql.version>
 
+        <mybatis-spring.version>1.3.0</mybatis-spring.version>
 		<org.mybatis.version>3.4.1</org.mybatis.version>
-		<mybatis-spring.version>1.3.0</mybatis-spring.version>
+		<mybatis-typehandlers.version>1.0.1</mybatis-typehandlers.version>
+
 
 		<!--apache-->
 		<org.apache.commons.version>3.3.2</org.apache.commons.version>
@@ -130,14 +132,20 @@
 		<!-- mybatis -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>${mybatis-spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
 			<version>${org.mybatis.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis-spring</artifactId>
-			<version>${mybatis-spring.version}</version>
+			<artifactId>mybatis-typehandlers-jsr310</artifactId>
+			<version>${mybatis-typehandlers.version}</version>
 		</dependency>
+
 
 		<!--apache-->
 		<dependency>
