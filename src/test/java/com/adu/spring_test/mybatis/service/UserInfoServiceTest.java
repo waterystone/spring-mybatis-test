@@ -19,5 +19,6 @@ public class UserInfoServiceTest extends BaseTest {
         UserInfo userInfo1=mockUserInfo();
         UserInfo userInfo2=mockUserInfo();
         userInfoService.addUsers(userInfo1,userInfo2);
+        logger.debug("end");
     }
 }
