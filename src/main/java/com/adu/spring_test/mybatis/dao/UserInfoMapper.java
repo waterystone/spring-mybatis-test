@@ -4,13 +4,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.adu.spring_test.mybatis.model.ProfInfo;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Repository;
 
 import com.adu.spring_test.mybatis.annotations.MapF2F;
+import com.adu.spring_test.mybatis.model.ProfInfo;
 import com.adu.spring_test.mybatis.model.UserInfo;
 
 @Repository
@@ -65,6 +66,15 @@ public interface UserInfoMapper {
      */
     @MapKey("id")
     Map<Long, UserInfo> queryUsersBetweenTime(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
+            @Param("rowBounds") RowBounds rowBounds);
+
+    /**
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param rowBounds
+     * @return
+     */
+    Cursor<UserInfo> queryUsersBetweenTime1(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
             @Param("rowBounds") RowBounds rowBounds);
 
     /**

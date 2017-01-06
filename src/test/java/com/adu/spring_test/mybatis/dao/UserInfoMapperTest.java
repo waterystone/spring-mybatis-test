@@ -8,10 +8,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.RowBounds;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.adu.spring_test.mybatis.BaseTest;
 import com.adu.spring_test.mybatis.model.ProfInfo;
@@ -21,20 +20,18 @@ public class UserInfoMapperTest extends BaseTest {
     @Resource
     private UserInfoMapper userInfoMapper;
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Test
     public void queryUserById() {
         long id = 1;
         UserInfo user = userInfoMapper.queryUserById(id);
-        logger.debug("user=" + user);
+        logger.debug("user={}", user);
     }
 
     @Test
     public void queryUserById2() {
         long id = 1;
         UserInfo user = userInfoMapper.queryUserById2(id);
-        logger.debug("user=" + user);
+        logger.debug("user={}", user);
     }
 
     @Test
@@ -43,9 +40,7 @@ public class UserInfoMapperTest extends BaseTest {
 
         Map<Long, UserInfo> userId2userInfoMap = userInfoMapper.queryUsersByIds(ids);
 
-        for (long id : ids) {
-            logger.debug("id={},userInfo={}", id, userId2userInfoMap.get(id));
-        }
+        print(userId2userInfoMap);
     }
 
     @Test
@@ -54,9 +49,7 @@ public class UserInfoMapperTest extends BaseTest {
 
         Map<Long, String> id2usernameMap = userInfoMapper.queryUserNamesByIds(ids);
 
-        for (Long id : ids) {
-            logger.debug("id={},username={}", id, id2usernameMap.get(id));
-        }
+        print(id2usernameMap);
     }
 
     @Test
@@ -65,9 +58,7 @@ public class UserInfoMapperTest extends BaseTest {
 
         Map<Long, ProfInfo> id2profInfoMap = userInfoMapper.queryProfInfosByIds(ids);
 
-        for (Long id : ids) {
-            logger.debug("id={},profInfo={}", id, id2profInfoMap.get(id));
-        }
+        print(id2profInfoMap);
     }
 
     @Test
@@ -76,9 +67,7 @@ public class UserInfoMapperTest extends BaseTest {
 
         Map<Long, Date> id2createTimeMap = userInfoMapper.queryCreateTimesByIds(ids);
 
-        for (Long id : ids) {
-            logger.debug("id={},createTime={}", id, id2createTimeMap.get(id));
-        }
+        print(id2createTimeMap);
     }
 
     @Test
@@ -88,9 +77,17 @@ public class UserInfoMapperTest extends BaseTest {
         Map<Long, UserInfo> userId2userInfoMap = userInfoMapper.queryUsersBetweenTime(start, now,
                 new RowBounds(offset, limit));
 
-        for (Map.Entry<Long, UserInfo> entry : userId2userInfoMap.entrySet()) {
-            logger.debug("id={},userInfo={}", entry.getKey(), entry.getValue());
-        }
+        print(userId2userInfoMap);
+    }
+
+    @Test
+    public void queryUsersBetweenTime1() {
+        Date now = new Date(), start = DateUtils.addDays(now, -365);
+        int offset = 0, limit = 10;
+        Cursor<UserInfo> userInfoCursor = userInfoMapper.queryUsersBetweenTime1(start, now,
+                new RowBounds(offset, limit));
+
+        print(userInfoCursor);
     }
 
     @Test

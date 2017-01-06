@@ -70,6 +70,13 @@
 		WHERE create_time BETWEEN #{startTime} AND #{endTime}
 	</select>
 
+	<select id="queryUsersBetweenTime1" resultType="com.adu.spring_test.mybatis.model.UserInfo">
+		SELECT
+		<include refid="baseCols" />
+		FROM user_info
+		WHERE create_time BETWEEN #{startTime} AND #{endTime}
+	</select>
+
 	<insert id="addUser" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
 		user_info(user_name,sex,age,prof_info)

@@ -1,6 +1,8 @@
 package com.adu.spring_test.mybatis;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.junit.runner.RunWith;
@@ -41,4 +43,20 @@ public class BaseTest {
         }
         return res;
     }
+
+    protected void print(Iterable<?> iterable) {
+        Iterator<?> iterator = iterable.iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            logger.debug("[{}]{}", ++i, iterator.next());
+        }
+    }
+
+    protected void print(Map<?, ?> map) {
+        int i = 0;
+        for (Map.Entry entry : map.entrySet()) {
+            logger.debug("[{}]key={},value={}", ++i, entry.getKey(), entry.getValue());
+        }
+    }
+
 }
