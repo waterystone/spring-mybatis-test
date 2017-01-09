@@ -38,8 +38,8 @@ import javafx.util.Pair;
  * @date 2016/12/22 18:44
  */
 @Intercepts(@Signature(method = "handleResultSets", type = ResultSetHandler.class, args = { Statement.class }))
-public class MapInterceptor implements Interceptor {
-    private Logger logger = LoggerFactory.getLogger(MapInterceptor.class);
+public class MapF2FInterceptor implements Interceptor {
+    private Logger logger = LoggerFactory.getLogger(MapF2FInterceptor.class);
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
