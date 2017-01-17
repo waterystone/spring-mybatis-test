@@ -73,7 +73,7 @@ public class UserInfoMapperTest extends BaseTest {
     @Test
     public void queryUsersBetweenTime() {
         Date now = new Date(), start = DateUtils.addDays(now, -365);
-        int offset = 0, limit = 10;
+        int offset = 0, limit = 3;
         Map<Long, UserInfo> userId2userInfoMap = userInfoMapper.queryUsersBetweenTime(start, now,
                 new RowBounds(offset, limit));
 

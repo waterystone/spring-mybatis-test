@@ -18,6 +18,13 @@
         <typeHandler handler="com.adu.spring_test.mybatis.typehandler.JsonTypeHandler"
                      javaType="com.adu.spring_test.mybatis.model.ProfInfo"/>
     </typeHandlers>
+    
+    <plugins>
+        <plugin interceptor="com.adu.spring_test.mybatis.interceptor.MapF2FInterceptor"></plugin>
+        <plugin interceptor="com.adu.spring_test.mybatis.interceptor.SlowQueryTimeInterceptor">
+            <property name="slowMilliSecond" value="1"></property>
+        </plugin>
+    </plugins>
 
 
 </configuration>

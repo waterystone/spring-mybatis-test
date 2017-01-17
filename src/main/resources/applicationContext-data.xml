@@ -72,13 +72,8 @@
 	<!-- session factory -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="configLocation" value="classpath:mybatis/mybatis-data-config.xml" />
+		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />
 		<property name="mapperLocations" value="classpath:mapper/**/*.xml" />
-		<property name="plugins">
-			<array>
-				<bean class="com.adu.spring_test.mybatis.interceptor.MapF2FInterceptor"/>
-			</array>
-		</property>
 	</bean>
 
 	<!-- mapper scanner configurer -->
@@ -94,7 +89,7 @@
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<!--使用注释事务 -->
+	<!--使用注解事务 -->
 	<tx:annotation-driven  transaction-manager="transactionManager" />
 
 </beans>
