@@ -77,7 +77,7 @@
 		WHERE create_time BETWEEN #{startTime} AND #{endTime}
 	</select>
 
-	<insert id="addUser" useGeneratedKeys="true" keyProperty="id">
+	<insert id="saveUser" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
 		user_info(user_name,sex,age,prof_info)
 		VALUES
@@ -89,7 +89,7 @@
 		)
 	</insert>
 
-	<insert id="addUser2" useGeneratedKeys="true" keyProperty="id">
+	<insert id="saveUser2" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
 		user_info(user_name,sex,age,prof_info)
 		VALUES
@@ -101,11 +101,11 @@
 		)
 	</insert>
 
-	<insert id="addUsers">
+	<insert id="saveUsers" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
 		user_info(user_name,sex,age,prof_info)
 		values
-		<foreach collection="userInfoList" item="item" separator=",">
+		<foreach collection="list" item="item" separator=",">
 			(
 				#{item.userName},
 				#{item.sex,typeHandler=com.adu.spring_test.mybatis.typehandler.EnumTypeHandler},
@@ -115,11 +115,11 @@
 		</foreach>
 	</insert>
 
-	<insert id="addUsers2">
+	<insert id="saveUsers2" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
 		user_info(user_name,sex,age,prof_info)
 		values
-		<foreach collection="userInfoList" item="item" separator=",">
+		<foreach collection="list" item="item" separator=",">
 			(
 			#{item.userName},
 			#{item.sex},
@@ -129,10 +129,16 @@
 		</foreach>
 	</insert>
 
-
-
 	<delete id="deleteById">
 		DELETE FROM user_info WHERE id = #{id}
+	</delete>
+
+	<delete id="deleteByIds">
+		DELETE FROM user_info
+		WHERE id IN
+		<foreach collection="list" open="(" close=")" item="item"  separator=",">
+			#{item}
+		</foreach>
 	</delete>
 
 </mapper>

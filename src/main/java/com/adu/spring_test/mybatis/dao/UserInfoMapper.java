@@ -83,7 +83,7 @@ public interface UserInfoMapper {
      * @param user
      * @return
      */
-    int addUser(UserInfo user);
+    int saveUser(UserInfo user);
 
     /**
      * 添加用户(在mybatis.xml中指定typeHandler)
@@ -91,7 +91,7 @@ public interface UserInfoMapper {
      * @param user
      * @return
      */
-    int addUser2(UserInfo user);
+    int saveUser2(UserInfo user);
 
     /**
      * 添加一批用户(在mapper.xml中指定typeHandler)
@@ -99,7 +99,7 @@ public interface UserInfoMapper {
      * @param userInfoList
      * @return
      */
-    int addUsers(@Param("userInfoList") List<UserInfo> userInfoList);
+    int saveUsers(List<UserInfo> userInfoList);
 
     /**
      * 添加一批用户(在mybatis.xml中指定typeHandler)
@@ -107,7 +107,7 @@ public interface UserInfoMapper {
      * @param userInfoList
      * @return
      */
-    int addUsers2(@Param("userInfoList") List<UserInfo> userInfoList);
+    int saveUsers2(List<UserInfo> userInfoList);
 
     /**
      * 根据id删除用户
@@ -116,4 +116,12 @@ public interface UserInfoMapper {
      * @return
      */
     int deleteById(@Param("id") long id);
+
+    /**
+     * 根据id批量删除用户
+     *
+     * @param idList
+     * @return
+     */
+    int deleteByIds(List<Long> idList);
 }

@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.adu.spring_test.mybatis.BaseTest;
 import com.adu.spring_test.mybatis.model.ProfInfo;
 import com.adu.spring_test.mybatis.model.UserInfo;
+import com.google.common.collect.Lists;
 
 public class UserInfoMapperTest extends BaseTest {
     @Resource
@@ -22,7 +23,7 @@ public class UserInfoMapperTest extends BaseTest {
 
     @Test
     public void queryUserById() {
-        long id = 1;
+        long id = 2;
         UserInfo user = userInfoMapper.queryUserById(id);
         logger.debug("user={}", user);
     }
@@ -91,40 +92,47 @@ public class UserInfoMapperTest extends BaseTest {
     }
 
     @Test
-    public void addUser() {
+    public void saveUser() {
         UserInfo userInfo = mockUserInfo();
-        int res = userInfoMapper.addUser(userInfo);
+        int res = userInfoMapper.saveUser(userInfo);
         logger.debug("userInfo={},res={}", userInfo, res);
     }
 
     @Test
-    public void addUser2() {
+    public void saveUser2() {
         UserInfo userInfo = mockUserInfo();
-        int res = userInfoMapper.addUser2(userInfo);
+        int res = userInfoMapper.saveUser2(userInfo);
         logger.debug("userInfo={},res={}", userInfo, res);
     }
 
     @Test
-    public void addUsers() {
+    public void saveUsers() {
         List<UserInfo> users = mockUserInfos(3);
 
-        int res = userInfoMapper.addUsers(users);
-        logger.debug("res=" + res);
+        int res = userInfoMapper.saveUsers(users);
+        logger.debug("res={}", res);
     }
 
     @Test
-    public void addUsers2() {
+    public void saveUsers2() {
         List<UserInfo> users = mockUserInfos(3);
 
-        int res = userInfoMapper.addUsers2(users);
-        logger.debug("res=" + res);
+        int res = userInfoMapper.saveUsers2(users);
+        logger.debug("res={}", res);
     }
 
     @Test
     public void deleteById() {
         long id = 1L;
         int res = userInfoMapper.deleteById(id);
-        logger.debug("res=" + res);
+        logger.debug("res={}", res);
+    }
+
+    @Test
+    public void deleteByIds() {
+        List<Long> idList = Lists.newArrayList(10000L, 10001L);
+        int res = userInfoMapper.deleteByIds(idList);
+        logger.debug("res={}", res);
 
     }
 

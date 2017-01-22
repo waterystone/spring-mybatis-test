@@ -25,9 +25,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Transactional()
     @Override
     public int addUsers(UserInfo userInfo1, UserInfo userInfo2) {
-        userInfoMapper.addUser(userInfo1);
+        userInfoMapper.saveUser(userInfo1);
         Lists.newArrayList().subList(0, 10);//throw IndexOutOfBoundsException
-        userInfoMapper.addUser(userInfo2);
+        userInfoMapper.saveUser(userInfo2);
         return 2;
 
     }

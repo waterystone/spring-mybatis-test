@@ -29,7 +29,7 @@ public class BaseTest {
     protected UserInfo mockUserInfo() {
         UserInfo res = new UserInfo();
         res.setUserName("adu-" + System.currentTimeMillis());
-        res.setSex(CodeEnumUtil.codeOf(SexEnum.class, (int) System.currentTimeMillis() % 3));
+        res.setSex(CodeEnumUtil.codeOf(SexEnum.class, (int) (System.currentTimeMillis() % 3)));
         res.setAge(20 + new Random().nextInt(20));
         res.setProfInfo(new ProfInfo(170 + 10 * new Random().nextDouble(), 80 + 10 * new Random().nextDouble(),
                 Lists.newArrayList("台球", "乒乓球")));
