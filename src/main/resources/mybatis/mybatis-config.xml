@@ -6,6 +6,7 @@
         <setting name="cacheEnabled" value="true"/>
         <!-- 查询时，关闭关联对象即时加载以提高性能 -->
         <setting name="lazyLoadingEnabled" value="false"/>
+        <!--指定应如何自动映射列到字段或属性。 NONE 表示取消自动映射；PARTIAL 只会自动映射没有定义嵌套结果集映射的结果集。 FULL 会自动映射任意复杂的结果集（无论是否嵌套）。-->
         <setting name="autoMappingBehavior" value="FULL"/>
         <!-- 支持java驼峰命名与DB下划线映射 -->
         <setting name="mapUnderscoreToCamelCase" value="true"/>
