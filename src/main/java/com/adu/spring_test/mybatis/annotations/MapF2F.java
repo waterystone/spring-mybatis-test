@@ -1,10 +1,6 @@
 package com.adu.spring_test.mybatis.annotations;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * 将查询结果映射成map的注解，其中第一个字段为key，第二个字段为value.
@@ -16,6 +12,7 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 public @interface MapF2F {
+    boolean isUnique() default true;//是否要求key无重复。如果要求无重复，而实际结果出现了重复，会抛出org.springframework.dao.DuplicateKeyException。
 }

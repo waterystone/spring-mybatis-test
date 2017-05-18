@@ -30,6 +30,7 @@ import com.adu.spring_test.mybatis.annotations.MapF2F;
 import com.adu.spring_test.mybatis.util.ReflectUtil;
 
 import javafx.util.Pair;
+import org.springframework.dao.DuplicateKeyException;
 
 /**
  * MapF2F的拦截器
@@ -58,11 +59,12 @@ public class MapF2FInterceptor implements Interceptor {
                 return invocation.proceed();
             }
 
+            MapF2F mapF2FAnnotation = method.getAnnotation(MapF2F.class);
             // 如果有MapF2F注解，则这里对结果进行拦截并转换
             Statement statement = (Statement) invocation.getArgs()[0];
             Pair<Class<?>, Class<?>> kvTypePair = getKVTypeOfReturnMap(method);// 获取返回Map里key-value的类型
             TypeHandlerRegistry typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();// 获取各种TypeHander的注册器
-            return result2Map(statement, typeHandlerRegistry, kvTypePair);
+            return result2Map(statement, typeHandlerRegistry, kvTypePair,mapF2FAnnotation);
         }
 
         return invocation.proceed();
@@ -130,11 +132,12 @@ public class MapF2FInterceptor implements Interceptor {
      * @param statement
      * @param typeHandlerRegistry MyBatis里typeHandler的注册器，方便转换成用户指定的结果类型
      * @param kvTypePair 函数指定返回Map key-value的类型
+     * @param mapF2FAnnotation
      * @return
      * @throws Throwable
      */
     private Object result2Map(Statement statement, TypeHandlerRegistry typeHandlerRegistry,
-            Pair<Class<?>, Class<?>> kvTypePair) throws Throwable {
+                              Pair<Class<?>, Class<?>> kvTypePair, MapF2F mapF2FAnnotation) throws Throwable {
         ResultSet resultSet = statement.getResultSet();
         List<Object> res = new ArrayList();
         Map<Object, Object> map = new HashMap();
@@ -142,6 +145,10 @@ public class MapF2FInterceptor implements Interceptor {
         while (resultSet.next()) {
             Object key = this.getObject(resultSet, 1, typeHandlerRegistry, kvTypePair.getKey());
             Object value = this.getObject(resultSet, 2, typeHandlerRegistry, kvTypePair.getValue());
+
+            if (mapF2FAnnotation.isUnique() && map.containsKey(key)) {//判断重复
+                throw new DuplicateKeyException("MapF2F duplicated key!kye=" + key);
+            }
 
             map.put(key, value);// 第一列作为key,第二列作为value。
         }
