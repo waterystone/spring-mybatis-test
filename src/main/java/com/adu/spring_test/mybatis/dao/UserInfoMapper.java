@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
@@ -86,6 +87,9 @@ public interface UserInfoMapper {
      */
     Cursor<UserInfo> queryUsersBetweenTime1(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
             @Param("rowBounds") RowBounds rowBounds);
+
+    Set<String> queryUserNamesBetweenTime2(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
+                                       @Param("rowBounds") RowBounds rowBounds);
 
     /**
      * 添加用户(在mapper.xml中指定typeHandler)

@@ -90,7 +90,7 @@
 		</foreach>
 	</select>
 
-	<select id="queryUsersBetweenTime" resultType="com.adu.spring_test.mybatis.model.UserInfo">
+	<select id="queryUsersBetweenTime" resultType="map">
 		SELECT
 		<include refid="baseCols" />
 		FROM user_info
@@ -100,6 +100,12 @@
 	<select id="queryUsersBetweenTime1" resultType="com.adu.spring_test.mybatis.model.UserInfo">
 		SELECT
 		<include refid="baseCols" />
+		FROM user_info
+		WHERE create_time BETWEEN #{startTime} AND #{endTime}
+	</select>
+
+	<select id="queryUserNamesBetweenTime2" resultType="string">
+		SELECT user_name
 		FROM user_info
 		WHERE create_time BETWEEN #{startTime} AND #{endTime}
 	</select>

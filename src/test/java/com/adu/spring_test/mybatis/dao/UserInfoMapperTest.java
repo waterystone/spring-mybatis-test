@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -116,6 +117,16 @@ public class UserInfoMapperTest extends BaseTest {
         Date now = new Date(), start = DateUtils.addDays(now, -365);
         int offset = 0, limit = 10;
         Cursor<UserInfo> userInfoCursor = userInfoMapper.queryUsersBetweenTime1(start, now,
+                new RowBounds(offset, limit));
+
+        print(userInfoCursor);
+    }
+
+    @Test
+    public void queryUsersBetweenTime2() {
+        Date now = new Date(), start = DateUtils.addDays(now, -365);
+        int offset = 0, limit = 10;
+        Set<String> userInfoCursor = userInfoMapper.queryUserNamesBetweenTime2(start, now,
                 new RowBounds(offset, limit));
 
         print(userInfoCursor);
