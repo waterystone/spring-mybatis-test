@@ -1,5 +1,6 @@
 package com.adu.spring_test.mybatis.dao;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +52,17 @@ public interface UserInfoMapper {
     @MapF2F()
     Map<Long, String> queryUserNamesByIds(@Param("ids") List<Long> ids);
 
+    @MapF2F(isAllowKeyRepeat = true, isAllowValueDifferentWithSameKey = true)
+    Map<String, Integer> queryAgesByUserNames(@Param("userNameList") List<String> userNameList);
+
     @MapF2F()
     Map<Long, ProfInfo> queryProfInfosByIds(@Param("ids") List<Long> ids);
+
+    @MapF2F()
+    Map<Long, String> queryProfInfosByIds2(@Param("ids") List<Long> ids);
+
+    @MapF2F()
+    Map<BigInteger, ProfInfo> queryProfInfosByIds3(@Param("ids") List<BigInteger> ids);
 
     @MapF2F()
     Map<Long, Date> queryCreateTimesByIds(@Param("ids") List<Long> ids);

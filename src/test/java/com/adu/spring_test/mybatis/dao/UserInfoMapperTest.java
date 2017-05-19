@@ -1,5 +1,6 @@
 package com.adu.spring_test.mybatis.dao;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -54,10 +55,39 @@ public class UserInfoMapperTest extends BaseTest {
     }
 
     @Test
+    public void queryAgesByUserNames() {
+        List<String> userNameList = Lists.newArrayList("adu-1474973034151", "adu-1474973344928");
+        Map<String, Integer> userName2AgeMap = userInfoMapper.queryAgesByUserNames(userNameList);
+
+        print(userName2AgeMap);
+    }
+
+    @Test
     public void queryProfInfosByIds() {
         List<Long> ids = Arrays.asList(1L, 2L, 3L, 4L);
 
         Map<Long, ProfInfo> id2profInfoMap = userInfoMapper.queryProfInfosByIds(ids);
+
+        print(id2profInfoMap);
+    }
+
+    @Test
+    public void queryProfInfosByIds2() {
+        List<Long> ids = Arrays.asList(1L, 2L, 3L, 4L);
+
+        Map<Long, String> id2profInfoMap = userInfoMapper.queryProfInfosByIds2(ids);
+
+        print(id2profInfoMap);
+    }
+
+    @Test
+    public void queryProfInfosByIds3() {
+        List<BigInteger> ids = Lists.newArrayList(BigInteger.valueOf(1), BigInteger.valueOf(2), BigInteger.valueOf(3),
+                BigInteger.valueOf(4));
+
+        Map<BigInteger, ProfInfo> id2profInfoMap = userInfoMapper.queryProfInfosByIds3(ids);
+
+        ProfInfo profInfo = id2profInfoMap.get(ids.get(1));
 
         print(id2profInfoMap);
     }

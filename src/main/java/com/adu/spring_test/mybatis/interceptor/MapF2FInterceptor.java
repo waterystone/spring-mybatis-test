@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,12 +26,12 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 
 import com.adu.spring_test.mybatis.annotations.MapF2F;
 import com.adu.spring_test.mybatis.util.ReflectUtil;
 
 import javafx.util.Pair;
-import org.springframework.dao.DuplicateKeyException;
 
 /**
  * MapF2F的拦截器
@@ -64,7 +65,7 @@ public class MapF2FInterceptor implements Interceptor {
             Statement statement = (Statement) invocation.getArgs()[0];
             Pair<Class<?>, Class<?>> kvTypePair = getKVTypeOfReturnMap(method);// 获取返回Map里key-value的类型
             TypeHandlerRegistry typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();// 获取各种TypeHander的注册器
-            return result2Map(statement, typeHandlerRegistry, kvTypePair,mapF2FAnnotation);
+            return result2Map(statement, typeHandlerRegistry, kvTypePair, mapF2FAnnotation);
         }
 
         return invocation.proceed();
@@ -137,7 +138,7 @@ public class MapF2FInterceptor implements Interceptor {
      * @throws Throwable
      */
     private Object result2Map(Statement statement, TypeHandlerRegistry typeHandlerRegistry,
-                              Pair<Class<?>, Class<?>> kvTypePair, MapF2F mapF2FAnnotation) throws Throwable {
+            Pair<Class<?>, Class<?>> kvTypePair, MapF2F mapF2FAnnotation) throws Throwable {
         ResultSet resultSet = statement.getResultSet();
         List<Object> res = new ArrayList();
         Map<Object, Object> map = new HashMap();
@@ -146,8 +147,16 @@ public class MapF2FInterceptor implements Interceptor {
             Object key = this.getObject(resultSet, 1, typeHandlerRegistry, kvTypePair.getKey());
             Object value = this.getObject(resultSet, 2, typeHandlerRegistry, kvTypePair.getValue());
 
-            if (mapF2FAnnotation.isUnique() && map.containsKey(key)) {//判断重复
-                throw new DuplicateKeyException("MapF2F duplicated key!kye=" + key);
+            if (map.containsKey(key)) {// 该key已存在
+                if (!mapF2FAnnotation.isAllowKeyRepeat()) {// 判断是否允许key重复
+                    throw new DuplicateKeyException("MapF2F duplicated key!key=" + key);
+                }
+
+                Object preValue = map.get(key);
+                if (!mapF2FAnnotation.isAllowValueDifferentWithSameKey() && !Objects.equals(value, preValue)) {// 判断是否允许value不同
+                    throw new DuplicateKeyException("MapF2F different value with same key!key=" + key + ",value1="
+                            + preValue + ",value2=" + value);
+                }
             }
 
             map.put(key, value);// 第一列作为key,第二列作为value。
