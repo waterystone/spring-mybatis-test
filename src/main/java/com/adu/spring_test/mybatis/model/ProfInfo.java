@@ -1,5 +1,6 @@
 package com.adu.spring_test.mybatis.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.adu.spring_test.mybatis.util.Stringfy;
@@ -8,7 +9,7 @@ import com.adu.spring_test.mybatis.util.Stringfy;
  * @author yunjie.du
  * @date 2016/9/27 15:45
  */
-public class ProfInfo extends Stringfy {
+public class ProfInfo extends Stringfy implements Serializable {
     private double height;
     private double weight;
     private List<String> interests;

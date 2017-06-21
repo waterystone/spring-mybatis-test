@@ -32,9 +32,18 @@ public class UserInfoMapperTest extends BaseTest {
 
     @Test
     public void queryUserById2() {
-        long id = 1;
+        long id = 2;
         UserInfo user = userInfoMapper.queryUserById2(id);
         logger.debug("user={}", user);
+    }
+
+    @Test
+    public void queryUserById2CacheTest() {
+        long id = 2;
+        for (int i = 0; i < 5; i++) {
+            UserInfo user = userInfoMapper.queryUserById2(id);
+            logger.debug("user={}", user);
+        }
     }
 
     @Test
