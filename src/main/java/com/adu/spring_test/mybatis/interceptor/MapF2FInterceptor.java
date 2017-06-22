@@ -50,7 +50,6 @@ public class MapF2FInterceptor implements Interceptor {
 
         String className = StringUtils.substringBeforeLast(mappedStatement.getId(), ".");// 当前类
         String currentMethodName = StringUtils.substringAfterLast(mappedStatement.getId(), ".");// 当前方法
-
         Method currentMethod = findMethod(className, currentMethodName);// 获取当前Method
 
         if (currentMethod == null || currentMethod.getAnnotation(MapF2F.class) == null) {// 如果当前Method没有注解MapF2F
