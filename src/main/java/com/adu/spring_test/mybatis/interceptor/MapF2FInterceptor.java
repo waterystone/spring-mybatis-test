@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.executor.resultset.DefaultResultSetHandler;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Interceptor;
@@ -22,6 +21,7 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.slf4j.Logger;
@@ -45,30 +45,25 @@ public class MapF2FInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        Object target = invocation.getTarget();
+        MetaObject metaStatementHandler = ReflectUtil.getRealTarget(invocation);
+        MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("mappedStatement");
 
-        if (target instanceof DefaultResultSetHandler) {
-            DefaultResultSetHandler defaultResultSetHandler = (DefaultResultSetHandler) target;
-            MappedStatement mappedStatement = ReflectUtil.getFieldValue(defaultResultSetHandler, "mappedStatement");
+        String className = StringUtils.substringBeforeLast(mappedStatement.getId(), ".");// 当前类
+        String currentMethodName = StringUtils.substringAfterLast(mappedStatement.getId(), ".");// 当前方法
 
-            String className = StringUtils.substringBeforeLast(mappedStatement.getId(), ".");// 当前类
-            String currentMethodName = StringUtils.substringAfterLast(mappedStatement.getId(), ".");// 当前方法
+        Method currentMethod = findMethod(className, currentMethodName);// 获取当前Method
 
-            Method method = findMethod(className, currentMethodName);// 获取当前Method
-
-            if (method == null || method.getAnnotation(MapF2F.class) == null) {// 如果当前Method没有注解MapF2F
-                return invocation.proceed();
-            }
-
-            MapF2F mapF2FAnnotation = method.getAnnotation(MapF2F.class);
-            // 如果有MapF2F注解，则这里对结果进行拦截并转换
-            Statement statement = (Statement) invocation.getArgs()[0];
-            Pair<Class<?>, Class<?>> kvTypePair = getKVTypeOfReturnMap(method);// 获取返回Map里key-value的类型
-            TypeHandlerRegistry typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();// 获取各种TypeHander的注册器
-            return result2Map(statement, typeHandlerRegistry, kvTypePair, mapF2FAnnotation);
+        if (currentMethod == null || currentMethod.getAnnotation(MapF2F.class) == null) {// 如果当前Method没有注解MapF2F
+            return invocation.proceed();
         }
 
-        return invocation.proceed();
+        // 如果有MapF2F注解，则这里对结果进行拦截并转换
+        MapF2F mapF2FAnnotation = currentMethod.getAnnotation(MapF2F.class);
+        Statement statement = (Statement) invocation.getArgs()[0];
+        Pair<Class<?>, Class<?>> kvTypePair = getKVTypeOfReturnMap(currentMethod);// 获取返回Map里key-value的类型
+        TypeHandlerRegistry typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();// 获取各种TypeHander的注册器
+        return result2Map(statement, typeHandlerRegistry, kvTypePair, mapF2FAnnotation);
+
     }
 
     @Override
