@@ -47,6 +47,21 @@
 		</foreach>
 	</select>
 
+	<select id="queryUsersByUserNameAndOthers" resultMap="userInfoResultMap">
+		SELECT
+			<include refid="baseCols" />
+		FROM user_info
+		WHERE user_name = #{userName}
+		<trim prefix="AND(" prefixOverrides="OR" suffix=")">
+			<if test="sex != -1">
+				OR sex = #{sex}
+			</if>
+			<if test="age != -1">
+				OR age = #{age}
+			</if>
+		</trim>
+	</select>
+
 	<select id="queryAgesByUserNames" resultType="map">
 		SELECT user_name, age
 		FROM user_info

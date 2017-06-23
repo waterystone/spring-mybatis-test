@@ -53,6 +53,9 @@ public interface UserInfoMapper {
     @MapF2F()
     Map<Long, String> queryUserNamesByIds(@Param("ids") List<Long> ids);
 
+    List<UserInfo> queryUsersByUserNameAndOthers(@Param("userName") String userName, @Param("sex") int sex,
+            @Param("age") int age);
+
     @MapF2F(isAllowKeyRepeat = true, isAllowValueDifferentWithSameKey = true)
     Map<String, Integer> queryAgesByUserNames(@Param("userNameList") List<String> userNameList);
 
@@ -89,7 +92,7 @@ public interface UserInfoMapper {
             @Param("rowBounds") RowBounds rowBounds);
 
     Set<String> queryUserNamesBetweenTime2(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
-                                       @Param("rowBounds") RowBounds rowBounds);
+            @Param("rowBounds") RowBounds rowBounds);
 
     /**
      * 添加用户(在mapper.xml中指定typeHandler)

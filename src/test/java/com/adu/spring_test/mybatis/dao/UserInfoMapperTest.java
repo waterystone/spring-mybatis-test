@@ -65,6 +65,15 @@ public class UserInfoMapperTest extends BaseTest {
     }
 
     @Test
+    public void queryUsersByUserNameAndOthers() {
+        String userName = "adu-1474973034151";
+        int sex = 1, age = 1;
+        List<UserInfo> res = userInfoMapper.queryUsersByUserNameAndOthers(userName, sex, age);
+
+        print(res);
+    }
+
+    @Test
     public void queryAgesByUserNames() {
         List<String> userNameList = Lists.newArrayList("adu-1474973034151", "adu-1474973344928");
         Map<String, Integer> userName2AgeMap = userInfoMapper.queryAgesByUserNames(userNameList);
