@@ -1,27 +1,26 @@
 package com.adu.spring_test.mybatis.dao;
 
-import java.math.BigInteger;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.adu.spring_test.mybatis.annotations.MapF2F;
+import com.adu.spring_test.mybatis.model.ProfInfo;
+import com.adu.spring_test.mybatis.model.UserInfo;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Repository;
 
-import com.adu.spring_test.mybatis.annotations.MapF2F;
-import com.adu.spring_test.mybatis.model.ProfInfo;
-import com.adu.spring_test.mybatis.model.UserInfo;
+import java.math.BigInteger;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface UserInfoMapper {
 
     /**
      * 根据id获取用户信息(在mapper.xml中指定typeHandler)
-     * 
+     *
      * @param id
      * @return
      */
@@ -29,7 +28,7 @@ public interface UserInfoMapper {
 
     /**
      * 根据id获取用户信息(在mybatis.xml中指定typeHandler)
-     * 
+     *
      * @param id
      * @return
      */
@@ -37,7 +36,7 @@ public interface UserInfoMapper {
 
     /**
      * 根据id获取一批用户信息
-     * 
+     *
      * @param ids
      * @return
      */
@@ -45,8 +44,18 @@ public interface UserInfoMapper {
     Map<Long, UserInfo> queryUsersByIds(@Param("ids") List<Long> ids);
 
     /**
+     * 根据id获取一批用户信息
+     *
+     * @param age
+     * @param userNames
+     * @return
+     */
+    @MapKey("id")
+    Map<Long, UserInfo> queryUsersByAge(@Param("age") int age, @Param("userNames") String... userNames);
+
+    /**
      * 批量获取用户姓名
-     * 
+     *
      * @param ids
      * @return key为ID，value为username
      */
@@ -54,7 +63,7 @@ public interface UserInfoMapper {
     Map<Long, String> queryUserNamesByIds(@Param("ids") List<Long> ids);
 
     List<UserInfo> queryUsersByUserNameAndOthers(@Param("userName") String userName, @Param("sex") int sex,
-            @Param("age") int age);
+                                                 @Param("age") int age);
 
     @MapF2F(isAllowKeyRepeat = true, isAllowValueDifferentWithSameKey = true)
     Map<String, Integer> queryAgesByUserNames(@Param("userNameList") List<String> userNameList);
@@ -73,26 +82,26 @@ public interface UserInfoMapper {
 
     /**
      * 获取某段时间插入的用户
-     * 
+     *
      * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param endTime   结束时间
      * @return
      */
     @MapKey("id")
     Map<Long, UserInfo> queryUsersBetweenTime(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
-            @Param("rowBounds") RowBounds rowBounds);
+                                              @Param("rowBounds") RowBounds rowBounds);
 
     /**
      * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param endTime   结束时间
      * @param rowBounds
      * @return
      */
     Cursor<UserInfo> queryUsersBetweenTime1(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
-            @Param("rowBounds") RowBounds rowBounds);
+                                            @Param("rowBounds") RowBounds rowBounds);
 
     Set<String> queryUserNamesBetweenTime2(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
-            @Param("rowBounds") RowBounds rowBounds);
+                                           @Param("rowBounds") RowBounds rowBounds);
 
     /**
      * 添加用户(在mapper.xml中指定typeHandler)
@@ -128,7 +137,7 @@ public interface UserInfoMapper {
 
     /**
      * 根据id删除用户
-     * 
+     *
      * @param id
      * @return
      */

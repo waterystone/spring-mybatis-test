@@ -1,23 +1,17 @@
 package com.adu.spring_test.mybatis.dao;
 
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.adu.spring_test.mybatis.BaseTest;
+import com.adu.spring_test.mybatis.model.ProfInfo;
+import com.adu.spring_test.mybatis.model.UserInfo;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.RowBounds;
 import org.junit.Test;
 
-import com.adu.spring_test.mybatis.BaseTest;
-import com.adu.spring_test.mybatis.model.ProfInfo;
-import com.adu.spring_test.mybatis.model.UserInfo;
-import com.google.common.collect.Lists;
+import javax.annotation.Resource;
+import java.math.BigInteger;
+import java.util.*;
 
 public class UserInfoMapperTest extends BaseTest {
     @Resource
@@ -51,6 +45,13 @@ public class UserInfoMapperTest extends BaseTest {
         List<Long> ids = Arrays.asList(1L, 2L, 3L, 4L);
 
         Map<Long, UserInfo> userId2userInfoMap = userInfoMapper.queryUsersByIds(ids);
+
+        print(userId2userInfoMap);
+    }
+
+    @Test
+    public void queryUsersByAge() {
+        Map<Long, UserInfo> userId2userInfoMap = userInfoMapper.queryUsersByAge(20, "adu-1483608755791", "adu-1474973034151");
 
         print(userId2userInfoMap);
     }

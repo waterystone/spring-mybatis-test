@@ -38,6 +38,19 @@
 		</foreach>
 	</select>
 
+	<select id="queryUsersByAge" resultMap="userInfoResultMap">
+		SELECT
+		<include refid="baseCols" />
+		FROM user_info
+		WHERE age = #{age}
+		<if test="userNames != null and userNames.length > 0">
+			AND user_name IN
+				<foreach collection="userNames" open="(" close=")" separator="," item="item">
+					#{item}
+				</foreach>
+		</if>
+	</select>
+
 	<select id="queryUserNamesByIds" resultType="map">
 		SELECT id, user_name
 		FROM user_info
