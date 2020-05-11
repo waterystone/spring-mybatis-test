@@ -11,3 +11,5 @@ CREATE TABLE `user_info` (
   PRIMARY KEY (`id`),
   KEY `idx_user_name` (`user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+
+INSERT INTO user_info(user_name,sex,age) values("adu",1,18);
